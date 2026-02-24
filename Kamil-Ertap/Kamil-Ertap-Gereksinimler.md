@@ -1,5 +1,3 @@
-# Tüm Gereksinimler 
-
 1. **Giriş Yapma** (Kamil Ertap)
    - **API Metodu:** `POST /auth/login`
    - **Açıklama:** Kullanıcıların sisteme giriş yaparak hizmetlere erişmesini sağlar. Email adresi ve şifre ile kimlik doğrulama yapılır. Başarılı giriş sonrası kullanıcıya erişim izni verilir ve kişisel verilerin güvenliği sağlanır.
@@ -39,9 +37,3 @@
 10. **Sipariş Sil** (Kamil Ertap)
    - **API Metodu:** `DELETE /order/delete/{orderId}`
    - **Açıklama:** Adminin sipariş silmesine yarar.
-
-
-
-# Gereksinim Dağılımları
-
-1. [Kamil Ertap'ın Gereksinimleri](Kamil-Ertap/Kamil-Ertap-Gereksinimler.md)
