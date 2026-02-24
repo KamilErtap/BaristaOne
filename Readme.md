@@ -1,6 +1,4 @@
-# PROJE ADI
-
-> **Not:** Bu bölüm proje adı ile güncellenmelidir.
+# BARISTA ONE
 
 ---
 
@@ -9,15 +7,14 @@
 ![Ürün Tanıtım Görseli](Product.png)
 
 **Proje Tanımı:** 
-> Projenin ne iş yaptığını anlatan bir paragraflık tanıtım metni buraya yazılacaktır.
 
-**Örnek:** ASY isimli e-ticaret sitemiz, online alışveriş deneyimini kolay ve keyifli hale getirmek için tasarlandı. Geniş ürün yelpazemiz sayesinde müşterilerimize en iyi seçenekleri sunarken, kullanıcı dostu arayüzümüz ile de alışveriş yapmayı daha rahat hale getiriyoruz. Sitemizde yer alan ürünler, kaliteli ve güvenilir markaların en yeni ve trend ürünlerinden oluşuyor. Müşterilerimiz, aradıkları ürünleri hızlı ve kolay bir şekilde bulabilirken, aynı zamanda satın alma süreçlerinde de sorunsuz bir deneyim yaşayacaklar. Hızlı teslimat seçenekleri, güvenli ödeme sistemleri ve müşteri memnuniyetine önem veren satış sonrası hizmetlerimizle, ASY olarak müşterilerimizin beklentilerini en üst seviyede karşılamayı hedefliyoruz. Her zaman en iyi fiyatlarla, kaliteli ürünleri müşterilerimize sunmak için çalışıyoruz ve müşteri memnuniyeti bizim için her zaman önceliklidir. ASY e-ticaret sitemize hoş geldiniz, size hizmet vermek için sabırsızlanıyoruz.
+BaristaOne isimli kafe otomasyon sitemiz anlaşmalı kişisel kafelerde iş yükünü ve insan temasını azaltmaya yarayan bir otomasyon sistemidir. Siparişerin ve ödemelerin masasında oturan müşterier tarafından kolay ve hızlı şekilde yapılabilmesi sıra bekleme gibi meziyetleri ortadan kaldırmaktadır. Kullanıcı dostu tasarımı ile sipariş, kampanya veya müşterilerin ürün seçmesini kolaylaştırmaktadır. Üye girişleri sayesinde müdavim müşterilere kampanyalar sağlanıp bir yandan da ürün takibi yapılabilecektir. Sistemimize ve deneyimlerimize güveniyoruz.
 
 **Proje Kategorisi:** 
-> Projenin hangi alanda yapıldığını belirten bir kategori. Örnek: E-Ticaret, Sosyal Medya vb.
+Kafe Otomasyon
 
 **Referans Uygulama:** 
-> [Örnek Referans Uygulama](https://example.com)
+Referans bir uygulama bulunmamaktadır.
 
 ---
 
@@ -31,15 +28,10 @@
 ## Proje Ekibi
 
 **Grup Adı:** 
-> Belirlediğiniz grup adı buraya yazılacaktır.
+Steamware
 
 **Ekip Üyeleri:** 
-- Ali Tutar
-- Veli Yılmaz
-- Selami Demir
-- Ayşe Kaya
-- Fatma Öztürk
-- Hayriye Şahin
+- Kamil Ertap
 
 ---
 
