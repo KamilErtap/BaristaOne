@@ -35,11 +35,12 @@ security:
 
 paths:
 
-  /api/auth/register:
+  /auth/register:
     post:
       tags:
         - Auth
       summary: Kullanıcı kayıt
+      description: Yeni bir kullanıcı oluşturmak için kullanılır. Kayıt işlemi sonrası kullanıcı giriş yapabilir.
       operationId: registerUser
       security: []
       requestBody:
@@ -48,6 +49,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RegisterInput'
+            examples:
+              example1:
+                summary: Örnek kullanıcı kaydı
+                value:
+                  email: user@example.com
+                  password: 123456
+                  firstName: John
+                  lastName: Doe
       responses:
         "201":
           description: Kullanıcı başarıyla oluşturuldu
@@ -62,11 +71,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /api/auth/login:
+  /auth/login:
     post:
       tags:
         - Auth
       summary: Kullanıcı giriş
+      description: Kayıtlı bir kullanıcı email ve şifresi ile giriş yapar. Başarılı girişte JWT token döner.
       operationId: loginUser
       security: []
       requestBody:
@@ -89,12 +99,51 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /api/menu:
+  /menu:
     get:
       tags:
         - Menu
       summary: Menü listele
+      description: Mevcut menüdeki tüm ürünleri listeler. Herkes erişebilir.
       operationId: listMenu
+      parameters:
+        - name: category
+          in: query
+          description: Ürün kategorisine göre filtreleme
+          schema:
+            type: string
+          example: "coffee"
+        - name: maxPrice
+          in: query
+          description: Belirli bir fiyattan daha ucuz ürünleri filtreleme
+          schema:
+            type: number
+          example: 100
+        - name: search
+          in: query
+          description: Ürün adında arama yapma
+          schema:
+            type: string
+          example: "latte"
+        - name: page
+          in: query
+          description: Sayfa numarası (sayfalama için)
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Sayfa başına ürün sayısı (sayfalama için)
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+        - name: sort
+          in: query
+          description: Sıralama kriteri (price_asc, price_desc, name_asc, name_desc)
+          schema:
+            type: string
+          example: "price_asc"
       responses:
         "200":
           description: Menü listelendi
@@ -109,6 +158,7 @@ paths:
       tags:
         - Menu
       summary: Menüye ürün ekle (Admin)
+      description: Yeni bir ürün eklemek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: addMenuItem
       requestBody:
         required: true
@@ -136,7 +186,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /api/menu/{urunId}:
+  /menu/{urunId}:
     parameters:
       - name: urunId
         in: path
@@ -150,6 +200,7 @@ paths:
       tags:
         - Menu
       summary: Menü ürünü güncelle (Admin)
+      description: Var olan bir ürünün bilgilerini güncellemek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: updateMenuItem
       requestBody:
         required: true
@@ -175,6 +226,7 @@ paths:
       tags:
         - Menu
       summary: Menü ürünü sil (Admin)
+      description: Var olan bir ürünü menüden silmek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: deleteMenuItem
       responses:
         "204":
@@ -186,11 +238,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /api/orders:
+  /orders:
     post:
       tags:
         - Orders
       summary: Sipariş oluştur
+      description: Kayıtlı bir kullanıcı yeni bir sipariş oluşturur. Sipariş oluşturulduktan sonra "pending" durumunda olur.
       operationId: createOrder
       requestBody:
         required: true
@@ -210,6 +263,7 @@ paths:
       tags:
         - Orders
       summary: Siparişleri listele (Admin)
+      description: Tüm siparişleri listeler. Sadece admin kullanıcılar erişebilir. Sayfalama ve filtreleme seçenekleri mevcuttur.
       operationId: listOrders
       parameters:
         - name: page
@@ -233,7 +287,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
 
-  /api/orders/{orderId}:
+  /orders/{orderId}:
     parameters:
       - name: orderId
         in: path
@@ -246,6 +300,7 @@ paths:
       tags:
         - Orders
       summary: Sipariş güncelle
+      description: Var olan bir siparişin durumunu güncellemek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: updateOrder
       requestBody:
         required: true
@@ -265,6 +320,7 @@ paths:
       tags:
         - Orders
       summary: Sipariş sil
+      description: Var olan bir siparişi silmek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: deleteOrder
       responses:
         "204":
