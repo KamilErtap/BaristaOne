@@ -1,0 +1,385 @@
+openapi: 3.0.3
+info:
+  title: Cafe Sipariş Sistemi API
+  version: 1.0.0
+  description: >
+    Bu API bir kafe sipariş sisteminin yönetilmesi için tasarlanmıştır.
+    Kullanıcılar sisteme kayıt olabilir, giriş yapabilir, menüyü görüntüleyebilir
+    ve sipariş oluşturabilir. Admin kullanıcılar menü ve siparişleri yönetebilir.
+
+servers:
+  - url: emptyForNow
+    description: Production
+  - url: emptyForNow
+    description: Staging
+  - url: emptyForNow
+    description: Development
+
+tags:
+  - name: Auth
+    description: Kullanıcı kimlik doğrulama işlemleri
+  - name: Menu
+    description: Menü yönetimi
+  - name: Orders
+    description: Sipariş işlemleri
+
+security:
+  - BearerAuth: []
+
+paths:
+
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Kullanıcı kayıt
+      operationId: registerUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+      responses:
+        "201":
+          description: Kullanıcı başarıyla oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "400":
+          description: Geçersiz veri
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Kullanıcı giriş
+      operationId: loginUser
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        "200":
+          description: Giriş başarılı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        "401":
+          description: Hatalı email veya şifre
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/menu:
+    get:
+      tags:
+        - Menu
+      summary: Menü listele
+      operationId: listMenu
+      responses:
+        "200":
+          description: Menü listelendi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItem'
+
+    post:
+      tags:
+        - Menu
+      summary: Menüye ürün ekle (Admin)
+      operationId: addMenuItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuInput'
+      responses:
+        "201":
+          description: Ürün eklendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        "401":
+          description: Yetkisiz erişim
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        "403":
+          description: Admin yetkisi gerekli
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/menu/{urunId}:
+    parameters:
+      - name: urunId
+        in: path
+        required: true
+        description: Menü ürününün ID değeri
+        schema:
+          type: string
+        example: "menu123"
+
+    put:
+      tags:
+        - Menu
+      summary: Menü ürünü güncelle (Admin)
+      operationId: updateMenuItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuInput'
+      responses:
+        "200":
+          description: Ürün güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        "404":
+          description: Ürün bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Menu
+      summary: Menü ürünü sil (Admin)
+      operationId: deleteMenuItem
+      responses:
+        "204":
+          description: Ürün silindi
+        "404":
+          description: Ürün bulunamadı
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/orders:
+    post:
+      tags:
+        - Orders
+      summary: Sipariş oluştur
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        "201":
+          description: Sipariş oluşturuldu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+    get:
+      tags:
+        - Orders
+      summary: Siparişleri listele (Admin)
+      operationId: listOrders
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+      responses:
+        "200":
+          description: Siparişler listelendi
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+  /api/orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: string
+        example: "order456"
+
+    put:
+      tags:
+        - Orders
+      summary: Sipariş güncelle
+      operationId: updateOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        "200":
+          description: Sipariş güncellendi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+    delete:
+      tags:
+        - Orders
+      summary: Sipariş sil
+      operationId: deleteOrder
+      responses:
+        "204":
+          description: Sipariş silindi
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: JWT token kullanılır. "Bearer <token>"
+
+  schemas:
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "user123"
+        email:
+          type: string
+          example: "user@email.com"
+        role:
+          type: string
+          example: "user"
+
+    RegisterInput:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "user@email.com"
+        password:
+          type: string
+          example: "123456"
+      required:
+        - email
+        - password
+
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "jwt-token-example"
+
+    MenuItem:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "menu123"
+        name:
+          type: string
+          example: "Latte"
+        price:
+          type: number
+          example: 75
+        description:
+          type: string
+          example: "Sıcak sütlü kahve"
+
+    MenuInput:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+      required:
+        - name
+        - price
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "order456"
+        userId:
+          type: string
+          example: "user123"
+        items:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          example: "pending"
+        createdAt:
+          type: string
+          format: date-time
+
+    OrderInput:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+      required:
+        - items
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Bir hata oluştu"

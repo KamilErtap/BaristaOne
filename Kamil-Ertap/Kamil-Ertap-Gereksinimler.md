@@ -7,33 +7,33 @@
    - **Açıklama:** Kullanıcıların yeni hesaplar oluşturarak sisteme kayıt olmasını sağlar. Kişisel bilgilerin toplanmasını ve hesap oluşturma işlemlerini içerir. Kullanıcılar email adresi ve şifre belirleyerek hesap oluşturur.
 
 3. **Menü Görüntüle** (Kamil Ertap)
-   - **API Metodu:** `GET /menu/list`
+   - **API Metodu:** `GET /api/menu`
    - **Açıklama:** Kullanıcıların menüyü görüntülemesine yarar.
    
 4. **Menüye Ekle** (Kamil Ertap)
-   - **API Metodu:** `POST /menu/add`
+   - **API Metodu:** `POST /api/menu`
    - **Açıklama:** Adminin menüye ürün eklemesine yarar.
 
 5. **Menüde Güncelle** (Kamil Ertap)
-   - **API Metodu:** `PUT /menu/update/{urunId}`
+   - **API Metodu:** `PUT /api/menu/{urunId}`
    - **Açıklama:** Adminin menüde ürün güncellemesine yarar.
 
 6. **Menüden Sil** (Kamil Ertap)
-   - **API Metodu:** `DELETE /menu/delete/{urunId}`
+   - **API Metodu:** `DELETE /api/menu/{urunId}`
    - **Açıklama:** Adminin menüden ürün silmesine yarar.
 
 7. **Sipariş Ver** (Kamil Ertap)
-   - **API Metodu:** `POST /order/add`
+   - **API Metodu:** `POST /api/orders`
    - **Açıklama:** Kullanıcıların sipariş vermesine yarar.
    
 8. **Sipariş Gör** (Kamil Ertap)
-   - **API Metodu:** `GET /order/list`
+   - **API Metodu:** `GET /api/orders`
    - **Açıklama:** Adminin siparişleri liste halinde görmesine yarar.
 
 9. **Sipariş Güncelle** (Kamil Ertap)
-   - **API Metodu:** `PUT /order/update/{orderId}`
+   - **API Metodu:** `PUT /api/orders/{orderId}`
    - **Açıklama:** Adminin sipariş güncellemesine yarar.
 
 10. **Sipariş Sil** (Kamil Ertap)
-   - **API Metodu:** `DELETE /order/delete/{orderId}`
+   - **API Metodu:** `DELETE /api/orders/{orderId}`
    - **Açıklama:** Adminin sipariş silmesine yarar.
