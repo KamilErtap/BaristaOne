@@ -299,7 +299,7 @@ paths:
     put:
       tags:
         - Orders
-      summary: Sipariş güncelle
+      summary: Sipariş güncelle (Admin)
       description: Var olan bir siparişin durumunu güncellemek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: updateOrder
       requestBody:
@@ -319,7 +319,7 @@ paths:
     delete:
       tags:
         - Orders
-      summary: Sipariş sil
+      summary: Sipariş sil (Admin)
       description: Var olan bir siparişi silmek için kullanılır. Sadece admin kullanıcılar erişebilir.
       operationId: deleteOrder
       responses:
