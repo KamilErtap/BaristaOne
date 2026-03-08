@@ -1,6 +1,7 @@
 # API Tasarımı - OpenAPI Specification 
 
 **OpenAPI Spesifikasyon Dosyası:** [api_tasarim.yaml](api_tasarim.yaml)
+**Bu doküman, OpenAPI Specification (OAS) 3.0 standardına göre hazırlanmış örnek bir API tasarımını içermektedir.
 
 ## OpenAPI Specification
 
