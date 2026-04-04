@@ -20,7 +20,7 @@ Referans bir uygulama bulunmamaktadır.
 
 ## Proje Linkleri
 
-- **REST API Adresi:** [api.yazmuh.com](https://api.yazmuh.com)
+- **REST API Adresi:** [barista-one-api.vercel.app](https://barista-one-api.vercel.app)
 - **Web Frontend Adresi:** [frontend.yazmuh.com](https://frontend.yazmuh.com)
 
 ---
