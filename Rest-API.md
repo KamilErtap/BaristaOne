@@ -1,6 +1,6 @@
 # REST API Görev Dağılımı
 
-**REST API Adresi:** [api.baristaOne.com](https://barista-one-api.vercel.app)
+**REST API Adresi:** [barista-one-api.vercel.app](https://barista-one-api.vercel.app)
 
 Bu dokümanda, proje ekibindeki her üyenin geliştirmekten sorumlu olduğu REST API metotları listelenmektedir.
 
