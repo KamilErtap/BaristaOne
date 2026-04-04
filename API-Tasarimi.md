@@ -19,7 +19,9 @@ info:
 
 servers:
   - url: http://localhost:5000/api
-    description: Development
+    description: Local Development
+  - url: https://barista-one-api.vercel.app/api
+    description: Production
 
 tags:
   - name: Auth
