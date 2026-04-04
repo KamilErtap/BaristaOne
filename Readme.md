@@ -21,7 +21,7 @@ Referans bir uygulama bulunmamaktadır.
 ## Proje Linkleri
 
 - **REST API Adresi:** [barista-one-api.vercel.app](https://barista-one-api.vercel.app)
-- **Web Frontend Adresi:** [frontend.yazmuh.com](https://frontend.yazmuh.com)
+- **Web Frontend Adresi:** [barista-one-frontend.vercel.app](https://barista-one-frontend.vercel.app)
 
 ---
 
