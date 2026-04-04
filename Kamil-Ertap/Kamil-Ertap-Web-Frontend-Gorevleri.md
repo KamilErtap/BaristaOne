@@ -1,140 +1,229 @@
-# Ali Tutar'ın Web Frontend Görevleri
+# Kamil Ertap'ın Web Frontend Görevleri
 
 ## 1. Üye Olma (Kayıt) Sayfası
-- **API Endpoint:** `POST /auth/register`
+- **API Endpoint:** `POST /api/auth/register`
 - **Görev:** Kullanıcı kayıt işlemi için web sayfası tasarımı ve implementasyonu
 - **UI Bileşenleri:**
-  - Responsive kayıt formu (desktop ve mobile uyumlu)
-  - Email input alanı (type="email", autocomplete="email")
-  - Şifre input alanı (type="password", şifre gücü göstergesi)
-  - Şifre tekrar input alanı (doğrulama için)
-  - Ad (firstName) input alanı (autocomplete="given-name")
-  - Soyad (lastName) input alanı (autocomplete="family-name")
-  - "Kayıt Ol" butonu (primary button style)
-  - "Zaten hesabınız var mı? Giriş Yap" linki
-  - Loading spinner (kayıt işlemi sırasında)
-  - Form container (card veya centered layout)
+  - Responsive kayıt formu
+  - Ad input alanı
+  - Email input alanı
+  - Şifre input alanı
+  - "Kayıt Ol" butonu
+  - "Zaten hesabın var mı? Giriş yap" linki
+  - Hata mesajı gösterim alanı
 - **Form Validasyonu:**
-  - HTML5 form validation (required, pattern attributes)
-  - JavaScript real-time validation
-  - Email format kontrolü (regex pattern)
-  - Şifre güvenlik kuralları (min 8 karakter, büyük/küçük harf, rakam)
-  - Şifre eşleşme kontrolü
-  - Ad ve soyad boş olamaz kontrolü
-  - Tüm alanlar geçerli olmadan buton disabled
-  - Client-side ve server-side validation
+  - Tüm alanlar zorunlu
+  - Email format kontrolü
+  - Şifre alanı boş olamaz kontrolü
 - **Kullanıcı Deneyimi:**
-  - Form hatalarını input altında gösterilmesi (inline validation)
-  - Başarılı kayıt sonrası success notification ve otomatik giriş sayfasına yönlendirme
-  - Hata durumlarında kullanıcı dostu mesajlar (409 Conflict: "Bu email zaten kullanılıyor")
-  - Form submission prevention (double-click koruması)
-  - Accessible form labels ve ARIA attributes
-  - Keyboard navigation desteği (Tab, Enter)
+  - Başarılı kayıt sonrası otomatik giriş yapılması
+  - Başarısız kayıt durumunda kullanıcıya hata mesajı gösterilmesi
+  - Formun sade ve anlaşılır olması
 - **Teknik Detaylar:**
-  - Framework: React/Vue/Angular veya Vanilla JS
-  - Form library: React Hook Form, Formik, veya native HTML5
-  - State management (form state, loading state, error state)
-  - Routing (kayıt sayfasından giriş sayfasına geçiş)
-  - SEO optimization (meta tags, structured data)
-  - Accessibility (WCAG 2.1 AA compliance)
+  - React ile geliştirilmiştir
+  - Form state yönetimi yapılır
+  - API isteği axios ile gönderilir
+  - Başarılı işlem sonrası yönlendirme yapılır
 
-## 2. Kullanıcı Profil Görüntüleme Sayfası
-- **API Endpoint:** `GET /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini görüntüleme sayfası tasarımı ve implementasyonu
+## 2. Giriş Yapma Sayfası
+- **API Endpoint:** `POST /api/auth/login`
+- **Görev:** Kullanıcı giriş işlemi için web sayfası tasarımı ve implementasyonu
 - **UI Bileşenleri:**
-  - Responsive profil layout (desktop: sidebar + content, mobile: stacked)
-  - Profil fotoğrafı alanı (circular avatar, placeholder veya gerçek fotoğraf)
-  - Kullanıcı adı ve soyadı (H1 heading)
-  - Email adresi (icon + text, copy to clipboard özelliği)
-  - Telefon numarası (icon + text, varsa)
-  - Hesap oluşturulma tarihi (formatted date)
-  - "Profili Düzenle" butonu (secondary button)
-  - "Hesabı Sil" butonu (danger button, alt kısımda)
-  - Refresh butonu veya auto-refresh
-  - Breadcrumb navigation (opsiyonel)
-- **Kullanıcı Deneyimi:**
-  - Loading skeleton screen (veri yüklenirken)
-  - Empty state (veri yoksa)
-  - Error state (yükleme hatası durumunda retry butonu)
-  - Smooth page transitions
-  - Profil fotoğrafı için placeholder avatar (initials)
-  - Responsive grid layout
-  - Print-friendly styles
-- **Teknik Detaylar:**
-  - Lazy loading images (profil fotoğrafları için)
-  - Image optimization (WebP format, responsive images)
-  - Client-side caching (localStorage/sessionStorage)
-  - State management (user data, loading, error states)
-  - Routing (profil düzenleme sayfasına geçiş)
-  - Deep linking desteği (profil paylaşımı için)
-  - Meta tags (Open Graph, Twitter Cards)
-
-## 3. Kullanıcı Profil Düzenleme Sayfası
-- **API Endpoint:** `PUT /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini düzenleme sayfası tasarımı ve implementasyonu
-- **UI Bileşenleri:**
-  - Responsive düzenleme formu
-  - Profil fotoğrafı düzenleme alanı (drag & drop upload, preview)
-  - Ad (firstName) input alanı (mevcut değerle dolu)
-  - Soyad (lastName) input alanı (mevcut değerle dolu)
-  - Email input alanı (mevcut değerle dolu, düzenlenebilir)
-  - Telefon numarası input alanı (mevcut değerle dolu, format maskesi)
-  - "Kaydet" butonu (primary button, sağ üst veya form altında)
-  - "İptal" butonu (secondary button, sol üst veya form altında)
-  - Değişiklik yapıldığında "Kaydet" butonu aktif olur
-  - Unsaved changes indicator
+  - Responsive giriş formu
+  - Email input alanı
+  - Şifre input alanı
+  - "Giriş Yap" butonu
+  - "Hesabın yok mu? Kayıt ol" linki
+  - Hata mesajı gösterim alanı
 - **Form Validasyonu:**
-  - Email format kontrolü (real-time)
-  - Telefon numarası format kontrolü (ülke kodu desteği, input masking)
-  - Real-time validation feedback
-  - Değişiklik yoksa "Kaydet" butonu disabled
-  - File upload validation (image type, size limits)
+  - Email ve şifre alanları zorunlu
+  - Email format kontrolü
 - **Kullanıcı Deneyimi:**
-  - Optimistic update (kaydet butonuna basıldığında UI anında güncellenir)
-  - Başarılı güncelleme sonrası success notification (toast/snackbar)
-  - Hata durumunda error mesajı ve değişiklikler geri alınır
-  - "İptal" butonuna basıldığında değişiklik kaybı için browser confirmation dialog
-  - Beforeunload event (sayfa kapatılırken uyarı)
-  - Image preview (upload öncesi)
-  - Progress indicator (image upload için)
+  - Başarılı giriş sonrası kullanıcı rolüne göre yönlendirme
+  - Hatalı girişte kullanıcıya anlaşılır hata mesajı gösterilmesi
 - **Teknik Detaylar:**
-  - Form state management (initial values, edited values, dirty state)
-  - File upload component (drag & drop, file picker)
-  - Image compression (client-side, before upload)
-  - Image preview functionality
-  - Routing (geri dönüş, kaydetme sonrası profil sayfasına dönüş)
-  - Unsaved changes warning (browser navigation)
-  - Form persistence (localStorage, draft saving)
+  - React ile geliştirilmiştir
+  - AuthContext ile kullanıcı bilgisi yönetilir
+  - Token localStorage içinde tutulur
+  - API isteği axios ile yapılır
 
-## 4. Hesap Silme Akışı
-- **API Endpoint:** `DELETE /users/{userId}`
-- **Görev:** Kullanıcı hesabını silme işlemi için web UI akışı tasarımı ve implementasyonu
+## 3. Menü Görüntüleme Sayfası
+- **API Endpoint:** `GET /api/menu`
+- **Görev:** Kullanıcıların menüyü görüntüleyebileceği ana sayfanın tasarımı ve implementasyonu
 - **UI Bileşenleri:**
-  - "Hesabı Sil" butonu (profil sayfasında, danger button style)
-  - Modal dialog (destructive action için)
-  - Şifre doğrulama alanı (güvenlik için opsiyonel)
-  - Son onay ekranı (uyarı mesajları ile)
-  - "Emin misiniz?" confirmation dialog (çift onay mekanizması)
-  - Warning icons ve visual cues
+  - Menü ürün kartları
+  - Ürün adı, açıklama, fiyat ve kategori bilgileri
+  - Ürün görseli
+  - "Sepete Ekle" butonu
+  - Arama kutusu
+  - Kategori filtreleme alanı
+  - Sıralama seçeneği
 - **Kullanıcı Deneyimi:**
-  - Destructive action için görsel uyarılar (kırmızı renk, warning icons)
-  - Açık ve net uyarı mesajları ("Bu işlem geri alınamaz")
-  - İptal seçeneği her zaman mevcut (modal close, cancel button)
-  - Silme işlemi sırasında loading indicator
-  - Başarılı silme sonrası logout ve login sayfasına yönlendirme
-  - Success message gösterilmesi
-- **Akış Adımları:**
-  1. Profil sayfasında "Hesabı Sil" butonuna tıklama
-  2. İlk uyarı modal dialog'u gösterilmesi
-  3. Onaylandığında şifre doğrulama (opsiyonel)
-  4. Son onay ekranı (detaylı uyarılar, checkbox confirmation)
-  5. Silme işlemi gerçekleştirme
-  6. Başarılı silme sonrası logout ve login sayfasına yönlendirme
+  - Menü ürünlerinin kart yapısında gösterilmesi
+  - Kullanıcıların ürünleri kolayca filtreleyebilmesi
+  - Mobil ve masaüstü uyumlu görünüm
 - **Teknik Detaylar:**
-  - Modal/Dialog component kullanımı
-  - Multi-step flow yönetimi (state machine veya step-based)
-  - Error handling (silme başarısız olursa)
-  - Logout işlemi entegrasyonu
-  - Session storage ve localStorage temizleme
-  - Redirect handling (login sayfasına dönüş)
-  - Browser history management
+  - Veriler backend'den axios ile çekilir
+  - React state ile filtreleme ve sıralama yönetilir
+  - Bileşen bazlı yapı kullanılır
+
+## 4. Menü Kategorilerini Görüntüleme
+- **API Endpoint:** `GET /api/menu/categories`
+- **Görev:** Menüde bulunan kategorilerin frontend tarafında filtreleme için listelenmesi
+- **UI Bileşenleri:**
+  - Kategori dropdown alanı
+  - Varsayılan "Tüm Kategoriler" seçeneği
+- **Kullanıcı Deneyimi:**
+  - Kullanıcı ürünleri kategoriye göre hızlıca filtreleyebilir
+- **Teknik Detaylar:**
+  - Kategoriler backend’den çekilir
+  - Menü sayfasındaki filtre alanına bağlanır
+
+## 5. Tek Bir Menü Ürününü Görüntüleme
+- **API Endpoint:** `GET /api/menu/{urunId}`
+- **Görev:** Belirli bir ürünün detay bilgisini görüntüleme altyapısını sağlamak
+- **UI Bileşenleri:**
+  - Ürün detay alanı
+  - Ürün adı, açıklama, fiyat, kategori ve görsel bilgisi
+- **Kullanıcı Deneyimi:**
+  - Kullanıcı seçilen ürün hakkında detaylı bilgi görebilir
+- **Teknik Detaylar:**
+  - Dinamik route mantığına uygun yapı kurulabilir
+  - API’den ürün id ile veri çekilir
+
+## 6. Menüye Ürün Ekleme Sayfası
+- **API Endpoint:** `POST /api/menu`
+- **Görev:** Admin kullanıcısının menüye yeni ürün ekleyebileceği form sayfasının tasarımı ve implementasyonu
+- **UI Bileşenleri:**
+  - Ürün adı input alanı
+  - Açıklama input alanı
+  - Fiyat input alanı
+  - Kategori input alanı
+  - Görsel URL input alanı
+  - Mevcutluk checkbox alanı
+  - "Ekle" butonu
+- **Kullanıcı Deneyimi:**
+  - Admin yeni ürünleri kolayca sisteme ekleyebilir
+  - Başarılı işlem sonrası liste güncellenir
+- **Teknik Detaylar:**
+  - Sadece admin kullanıcı erişebilir
+  - API isteğinde Authorization header kullanılır
+  - Form state React ile yönetilir
+
+## 7. Menü Ürünü Güncelleme Sayfası
+- **API Endpoint:** `PUT /api/menu/{urunId}`
+- **Görev:** Admin kullanıcısının mevcut menü ürününü güncelleyebileceği düzenleme akışının implementasyonu
+- **UI Bileşenleri:**
+  - Önceden dolu form alanları
+  - "Güncelle" butonu
+  - "İptal" butonu
+- **Kullanıcı Deneyimi:**
+  - Admin seçtiği ürünü düzenleyebilir
+  - Düzenleme sonrası ürün listesi yenilenir
+- **Teknik Detaylar:**
+  - Ürün bilgileri forma aktarılır
+  - Güncelleme isteği axios ile gönderilir
+  - Sadece admin erişimi sağlanır
+
+## 8. Menüden Ürün Silme Akışı
+- **API Endpoint:** `DELETE /api/menu/{urunId}`
+- **Görev:** Admin kullanıcısının menüdeki bir ürünü silebilmesi için gerekli UI akışının tasarımı ve implementasyonu
+- **UI Bileşenleri:**
+  - "Sil" butonu
+  - Onay mesajı veya confirmation dialog
+- **Kullanıcı Deneyimi:**
+  - Yanlışlıkla silmeyi önlemek için onay istenir
+  - Başarılı silme sonrası liste güncellenir
+- **Teknik Detaylar:**
+  - Silme isteği axios ile yapılır
+  - Sadece admin kullanıcılara açıktır
+
+## 9. Sipariş Verme Sayfası
+- **API Endpoint:** `POST /api/orders`
+- **Görev:** Kullanıcının menüden seçtiği ürünlerle sipariş oluşturmasını sağlayan arayüzün tasarımı ve implementasyonu
+- **UI Bileşenleri:**
+  - Sepet alanı
+  - Sepete ürün ekleme butonu
+  - Ürün adet artırma ve azaltma butonları
+  - Masa numarası input alanı
+  - Toplam fiyat gösterimi
+  - "Siparişi Oluştur" butonu
+- **Kullanıcı Deneyimi:**
+  - Kullanıcı ürünleri sepete ekleyebilir
+  - Masa numarası girerek sipariş oluşturabilir
+  - Başarılı sipariş sonrası sepet temizlenir
+- **Teknik Detaylar:**
+  - Sipariş verileri frontend’de state ile tutulur
+  - API isteği axios ile gönderilir
+  - Yalnızca giriş yapmış customer rolündeki kullanıcı sipariş verebilir
+
+## 10. Kendi Siparişlerini Görüntüleme Sayfası
+- **API Endpoint:** `GET /api/orders/my-orders`
+- **Görev:** Giriş yapan kullanıcının kendi siparişlerini görüntüleyebileceği sayfanın tasarımı ve implementasyonu
+- **UI Bileşenleri:**
+  - Sipariş kartları
+  - Sipariş numarası
+  - Masa numarası
+  - Sipariş durumu
+  - Toplam fiyat
+  - Sipariş tarih bilgisi
+  - Sipariş ürünleri listesi
+  - Filtreleme ve sıralama alanları
+- **Kullanıcı Deneyimi:**
+  - Kullanıcı geçmiş siparişlerini görebilir
+  - Sipariş durumunu takip edebilir
+- **Teknik Detaylar:**
+  - Veriler backend’den çekilir
+  - Query parametreleri ile filtreleme yapılabilir
+  - Sayfa sadece giriş yapan kullanıcıya açıktır
+
+## 11. Tüm Siparişleri Görüntüleme Sayfası
+- **API Endpoint:** `GET /api/orders`
+- **Görev:** Admin kullanıcısının tüm siparişleri görüntüleyebileceği yönetim sayfasının tasarımı ve implementasyonu
+- **UI Bileşenleri:**
+  - Sipariş listesi
+  - Müşteri adı ve email bilgisi
+  - Masa numarası
+  - Sipariş durumu
+  - Toplam fiyat
+  - Sipariş ürünleri listesi
+  - Filtreleme ve sıralama alanları
+- **Kullanıcı Deneyimi:**
+  - Admin tüm siparişleri takip edebilir
+  - Sipariş yoğunluğunu yönetebilir
+- **Teknik Detaylar:**
+  - Sayfa yalnızca admin erişimine açıktır
+  - Axios ile veri çekilir
+  - Role-based route koruması uygulanır
+
+## 12. Sipariş Durumu Güncelleme Sayfası
+- **API Endpoint:** `PUT /api/orders/{orderId}/status`
+- **Görev:** Admin kullanıcısının sipariş durumunu güncelleyebilmesini sağlayan arayüzün implementasyonu
+- **UI Bileşenleri:**
+  - "Alındı" butonu
+  - "Hazırlanıyor" butonu
+  - "Hazır" butonu
+  - "Teslim Edildi" butonu
+- **Kullanıcı Deneyimi:**
+  - Admin siparişlerin durumunu hızlıca değiştirebilir
+  - Değişiklik sonrası sipariş listesi güncellenir
+- **Teknik Detaylar:**
+  - Güncelleme isteği axios ile yapılır
+  - Admin yetkisi gerekir
+  - Güncelleme sonrası veriler tekrar çekilir
+
+## 13. Ortak Frontend Altyapısı
+- **Görev:** Uygulamanın genel frontend altyapısının tasarımı ve implementasyonu
+- **UI Bileşenleri:**
+  - Navbar
+  - Protected route yapısı
+  - Admin route koruması
+  - Ortak sayfa düzenleri
+- **Kullanıcı Deneyimi:**
+  - Kullanıcı rolüne göre uygun menülerin gösterilmesi
+  - Yetkisiz kullanıcının korumalı sayfalara erişememesi
+- **Teknik Detaylar:**
+  - React Router kullanılır
+  - AuthContext ile kullanıcı oturumu yönetilir
+  - Token localStorage üzerinde tutulur
+  - Axios interceptor ile Authorization header otomatik eklenir
