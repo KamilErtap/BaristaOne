@@ -1,5 +1,7 @@
 # Kamil Ertap'ın Web Frontend Görevleri
 
+** Front-end Test Videosu: ** [Link](https://youtu.be/BrR3wQKNw_w)
+
 ## 1. Üye Olma (Kayıt) Sayfası
 - **API Endpoint:** `POST /api/auth/register`
 - **Görev:** Kullanıcı kayıt işlemi için web sayfası tasarımı ve implementasyonu

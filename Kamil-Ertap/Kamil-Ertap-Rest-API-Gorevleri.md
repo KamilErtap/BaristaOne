@@ -1,5 +1,7 @@
 # Kamil Ertap'ın REST API Metotları
 
+** API Test Videosu: ** [Link](https://www.youtube.com/watch?v=TO_1rXAQOAA)
+
 ## 1. Üye Olma
 - **Endpoint:** `POST /api/auth/register`
 - **Açıklama:** Yeni kullanıcıların sisteme kayıt olmasını sağlar. Kullanıcılar ad, email adresi ve şifre bilgilerini girerek hesap oluşturabilir.

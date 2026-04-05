@@ -1,0 +1,527 @@
+{
+  "info": {
+    "_postman_id": "48d5f7e1-a543-4132-8239-188652b6bc2f",
+    "name": "BaristaOne",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50534195",
+    "_collection_link": "https://go.postman.co/collection/50534195-48d5f7e1-a543-4132-8239-188652b6bc2f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "name",
+              "value": "test",
+              "type": "text",
+              "uuid": "11f33cff-72de-4177-9954-5f8facc6dfe0"
+            },
+            {
+              "key": "email",
+              "value": "{{$randomExampleEmail}}",
+              "type": "text",
+              "uuid": "e8f0d9b8-c199-464d-958c-c45334405ef5"
+            },
+            {
+              "key": "password",
+              "value": "123456",
+              "type": "text",
+              "uuid": "0c804174-71b9-4b5b-a806-409f8768bb88"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let response = pm.response.json();\r",
+              "pm.environment.set(\"token\", response.token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "email",
+              "value": "test@example.com",
+              "type": "text",
+              "uuid": "6d94423d-81c5-43a2-9a67-e7f837144b7e"
+            },
+            {
+              "key": "password",
+              "value": "123456",
+              "type": "text",
+              "uuid": "59a75c12-70e4-46da-8109-6aaba6ead3a3"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Me",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListMenu",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/menu?sort=price_asc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "menu"
+          ],
+          "query": [
+            {
+              "key": "sort",
+              "value": "price_asc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListCategories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/menu/categories",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "menu",
+            "categories"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AddMenuItem",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let response = pm.response.json();\r",
+              "pm.environment.set(\"menuId\", response.item._id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "name",
+              "value": "latte",
+              "type": "text",
+              "uuid": "554ba3d6-e41d-445f-ad69-958e0cd60265"
+            },
+            {
+              "key": "description",
+              "value": "sütlü kahve",
+              "type": "text",
+              "uuid": "71512b5c-c76a-425d-bc55-fc0932e6ba04"
+            },
+            {
+              "key": "price",
+              "value": "120",
+              "type": "text",
+              "uuid": "a6d40996-6154-41a4-8ef4-25de03d2a7c8"
+            },
+            {
+              "key": "category",
+              "value": "Kahve",
+              "type": "text",
+              "uuid": "30cd4b19-b679-4fe9-8ff8-2e7c60d98bfe"
+            },
+            {
+              "key": "image",
+              "value": "https://images.unsplash.com/photo-1517701604599-bb29b565090c",
+              "type": "text",
+              "uuid": "426cfc48-d64b-4fe5-8b79-026adaf89177"
+            },
+            {
+              "key": "isAvailable",
+              "value": "true",
+              "type": "text",
+              "uuid": "13681e6d-17ba-489d-862b-ec2c28b4afa9"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/menu",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "menu"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetMenuItem",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/menu/{{menuId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "menu",
+            "{{menuId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateMenuItem",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "name",
+              "value": "latte",
+              "type": "text",
+              "uuid": "554ba3d6-e41d-445f-ad69-958e0cd60265"
+            },
+            {
+              "key": "description",
+              "value": "sütlü kahve",
+              "type": "text",
+              "uuid": "71512b5c-c76a-425d-bc55-fc0932e6ba04"
+            },
+            {
+              "key": "price",
+              "value": "130",
+              "type": "text",
+              "uuid": "a6d40996-6154-41a4-8ef4-25de03d2a7c8"
+            },
+            {
+              "key": "category",
+              "value": "Kahve",
+              "type": "text",
+              "uuid": "30cd4b19-b679-4fe9-8ff8-2e7c60d98bfe"
+            },
+            {
+              "key": "image",
+              "value": "https://images.unsplash.com/photo-1517701604599-bb29b565090c",
+              "type": "text",
+              "uuid": "426cfc48-d64b-4fe5-8b79-026adaf89177"
+            },
+            {
+              "key": "isAvailable",
+              "value": "true",
+              "type": "text",
+              "uuid": "13681e6d-17ba-489d-862b-ec2c28b4afa9"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/menu/{{menuId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "menu",
+            "{{menuId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GiveOrder",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let response = pm.response.json();\r",
+              "pm.environment.set(\"orderId\", response.order._id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"menuItem\": \"{{menuId}}\",\r\n      \"quantity\": 2\r\n    }\r\n  ],\r\n  \"tableNumber\": 4,\r\n  \"paymentStatus\": \"paid\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetOrder",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/orders/my-orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders",
+            "my-orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListOrders",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateOrder",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"orderStatus\": \"ready\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/orders/{{orderId}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders",
+            "{{orderId}}",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteMenuItem",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{adminToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": []
+        },
+        "url": {
+          "raw": "{{baseUrl}}/menu/{{menuId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "menu",
+            "{{menuId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
