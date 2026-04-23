@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { categoryApi } from '../api/categoryApi';
 import { getCategoryList } from '../api/responseHelpers';
-
+import Checkbox from '../components/common/Checkbox';
 import PageHeader from '../components/common/PageHeader';
 import Card, { CardBody } from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -155,15 +155,13 @@ const AdminCategories = () => {
                 onChange={handleFormChange}
               />
 
-              <label style={styles.checkboxRow}>
-                <input
-                  type="checkbox"
-                  name="isActive"
-                  checked={form.isActive}
-                  onChange={handleFormChange}
-                />
-                Kategori aktif
-              </label>
+              <Checkbox
+                name="isActive"
+                checked={form.isActive}
+                onChange={handleFormChange}
+                label="Kategori aktif"
+                description="Pasif kategori ürün formlarında görünmez hale getirilebilir."
+              />
 
               <div style={styles.formActions}>
                 <Button type="submit" variant="primary">

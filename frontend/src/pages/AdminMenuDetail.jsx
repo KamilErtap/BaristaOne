@@ -12,6 +12,7 @@ import Card, { CardBody } from '../components/common/Card';
 import Badge from '../components/common/Badge';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
+import Checkbox from '../components/common/Checkbox';
 
 const AdminMenuDetail = () => {
   const { id } = useParams();
@@ -305,21 +306,13 @@ const AdminMenuDetail = () => {
                 onChange={handleChange}
               />
 
-              <label style={styles.toggleRow}>
-                <input
-                  type="checkbox"
-                  name="isAvailable"
-                  checked={form.isAvailable}
-                  onChange={handleChange}
-                  style={styles.checkbox}
-                />
-                <div>
-                  <strong>Ürün satışta</strong>
-                  <p style={styles.muted}>
-                    Kapalıysa müşteri ürünü görebilir ama siparişe ekleyemez.
-                  </p>
-                </div>
-              </label>
+              <Checkbox
+                name="isAvailable"
+                checked={form.isAvailable}
+                onChange={handleChange}
+                label="Ürün satışta"
+                description="Kapalıysa müşteri ürünü görebilir ama siparişe ekleyemez."
+              />
 
               <div style={styles.actions}>
                 <Button

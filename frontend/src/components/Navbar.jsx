@@ -3,79 +3,115 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
-  const { userInfo, logout } = useAuth();
   const navigate = useNavigate();
+  const { userInfo, logout } = useAuth();
   const { totalItems } = useCart();
+
+  const role = userInfo?.user?.role;
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
+  const renderRolePanelLink = () => {
+    if (role === 'admin') {
+      return (
+        <Link to="/admin/dashboard" style={styles.link}>
+          Panel
+        </Link>
+      );
+    }
+
+    if (role === 'owner') {
+      return (
+        <Link to="/owner/dashboard" style={styles.link}>
+          Owner
+        </Link>
+      );
+    }
+
+    if (role === 'kitchen') {
+      return (
+        <Link to="/admin/kitchen" style={styles.link}>
+          Kitchen
+        </Link>
+      );
+    }
+
+    if (role === 'waiter') {
+      return (
+        <Link to="/admin/waiter" style={styles.link}>
+          Waiter
+        </Link>
+      );
+    }
+
+    return null;
+  };
+
   return (
-    <nav style={styles.navWrapper}>
-      <div style={styles.navInner}>
-        <Link to="/" style={styles.brand}>
+    <header style={styles.header}>
+      <div style={styles.container}>
+        <Link to="/menu" style={styles.brand}>
           ☕ BaristaOne
         </Link>
 
-        <div style={styles.links}>
-          <Link to="/menu" style={styles.link}>Menü</Link>
+        <nav style={styles.nav}>
+          <Link to="/menu" style={styles.link}>
+            Menü
+          </Link>
 
-          {userInfo && userInfo.user.role === 'customer' && (
+          {renderRolePanelLink()}
+
+          {role === 'customer' && (
             <>
               <Link to="/cart" style={styles.link}>
                 Sepet ({totalItems})
               </Link>
+
               <Link to="/orders" style={styles.link}>
                 Siparişlerim
               </Link>
             </>
           )}
-          
-          {userInfo && userInfo.user.role === 'admin' && (
-            <>
-              <Link to="/admin/dashboard" style={styles.link}>Dashboard</Link>
-              <Link to="/admin/menu" style={styles.link}>Menü Yönetimi</Link>
-              <Link to="/admin/orders" style={styles.link}>Sipariş Yönetimi</Link>
-            </>
-          )}
 
           {!userInfo ? (
             <>
-              <Link to="/login" style={styles.authButton}>
-                Giriş
+              <Link to="/login" style={styles.link}>
+                Giriş Yap
               </Link>
-              <Link to="/register" style={styles.primaryButton}>
+
+              <Link to="/register" style={styles.link}>
                 Kayıt Ol
               </Link>
             </>
           ) : (
-            <>
-              <span style={styles.userBadge}>
-                {userInfo.user.name} · {userInfo.user.role}
+            <div style={styles.userBox}>
+              <span style={styles.userName}>
+                {userInfo.user?.name} ({role})
               </span>
+
               <button onClick={handleLogout} style={styles.logoutButton}>
-                Çıkış
+                Çıkış Yap
               </button>
-            </>
+            </div>
           )}
-        </div>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 };
 
 const styles = {
-  navWrapper: {
+  header: {
     position: 'sticky',
     top: 0,
     zIndex: 50,
-    backdropFilter: 'blur(10px)',
-    background: 'rgba(255,255,255,0.85)',
+    background: '#ffffff',
     borderBottom: '1px solid #e2e8f0',
   },
-  navInner: {
+  container: {
     width: 'min(1200px, calc(100% - 32px))',
     margin: '0 auto',
     minHeight: '72px',
@@ -84,48 +120,41 @@ const styles = {
     alignItems: 'center',
     gap: '16px',
     flexWrap: 'wrap',
+    padding: '12px 0',
   },
   brand: {
-    fontWeight: 800,
     fontSize: '22px',
+    fontWeight: 800,
     color: '#8b5e3c',
   },
-  links: {
+  nav: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
+    gap: '14px',
     flexWrap: 'wrap',
   },
   link: {
     color: '#334155',
-    fontWeight: 500,
-  },
-  authButton: {
-    padding: '10px 14px',
-    borderRadius: '12px',
-    background: '#f1f5f9',
     fontWeight: 600,
   },
-  primaryButton: {
-    padding: '10px 14px',
-    borderRadius: '12px',
-    background: '#8b5e3c',
-    color: '#fff',
-    fontWeight: 600,
+  userBox: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    flexWrap: 'wrap',
   },
-  userBadge: {
-    background: '#f8fafc',
-    border: '1px solid #e2e8f0',
-    padding: '8px 12px',
-    borderRadius: '999px',
+  userName: {
     color: '#475569',
-    fontSize: '14px',
+    fontWeight: 600,
   },
   logoutButton: {
-    background: '#dc2626',
+    border: 'none',
+    background: '#8b5e3c',
     color: '#fff',
     padding: '10px 14px',
     borderRadius: '12px',
+    cursor: 'pointer',
+    fontWeight: 700,
   },
 };
 

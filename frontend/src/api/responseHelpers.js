@@ -50,3 +50,7 @@ export const getTables = (response) => {
   const data = unwrapData(response);
   return data.tables || response.data;
 };
+
+export const getReportData = (response) => {
+  return unwrapData(response);
+};

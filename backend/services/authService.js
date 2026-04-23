@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const ROLES = require('../constants/roles');
 
 const formatUser = (user) => {
   return {
@@ -30,7 +31,7 @@ const registerUserService = async ({ name, email, password }) => {
     name,
     email: email.toLowerCase(),
     password,
-    role: 'customer',
+    role: ROLES.CUSTOMER,
   });
 
   return user;

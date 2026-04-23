@@ -9,7 +9,8 @@ const {
 } = require('../controllers/orderController');
 
 const protect = require('../middleware/authMiddleware');
-const adminOnly = require('../middleware/adminMiddleware');
+const allowRoles = require('../middleware/roleMiddleware');
+const ROLES = require('../constants/roles');
 const validate = require('../middleware/validateMiddleware');
 
 const {
@@ -19,7 +20,21 @@ const {
 
 router.post('/', protect, createOrderValidator, validate, createOrder);
 router.get('/my-orders', protect, getMyOrders);
-router.get('/', protect, adminOnly, getAllOrders);
-router.put('/:id/status', protect, adminOnly, updateOrderStatusValidator, validate, updateOrderStatus);
+
+router.get(
+  '/',
+  protect,
+  allowRoles(ROLES.ADMIN, ROLES.OWNER, ROLES.KITCHEN, ROLES.WAITER),
+  getAllOrders
+);
+
+router.put(
+  '/:id/status',
+  protect,
+  allowRoles(ROLES.ADMIN, ROLES.OWNER, ROLES.KITCHEN, ROLES.WAITER),
+  updateOrderStatusValidator,
+  validate,
+  updateOrderStatus
+);
 
 module.exports = router;

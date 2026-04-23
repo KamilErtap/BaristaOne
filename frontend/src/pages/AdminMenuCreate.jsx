@@ -8,6 +8,7 @@ import PageHeader from '../components/common/PageHeader';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import Card, { CardBody } from '../components/common/Card';
+import Checkbox from '../components/common/Checkbox';
 
 const initialForm = {
   name: '',
@@ -141,15 +142,13 @@ const AdminMenuCreate = () => {
                 onChange={handleChange}
               />
 
-              <label style={styles.checkboxRow}>
-                <input
-                  type="checkbox"
-                  name="isAvailable"
-                  checked={form.isAvailable}
-                  onChange={handleChange}
-                />
-                Ürün mevcut
-              </label>
+              <Checkbox
+                name="isAvailable"
+                checked={form.isAvailable}
+                onChange={handleChange}
+                label="Ürün mevcut"
+                description="Kapalıysa müşteri ürünü görebilir ama siparişe ekleyemez."
+              />
 
               <Button type="submit" variant="primary" disabled={submitting}>
                 {submitting ? 'Ekleniyor...' : 'Ürünü Ekle'}

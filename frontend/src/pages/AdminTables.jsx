@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { tableApi } from '../api/tableApi';
 import { getTables } from '../api/responseHelpers';
-
+import Checkbox from '../components/common/Checkbox';
 import PageHeader from '../components/common/PageHeader';
 import Card, { CardBody } from '../components/common/Card';
 import Button from '../components/common/Button';
@@ -16,6 +17,133 @@ const initialForm = {
   capacity: '',
   isActive: true,
   description: '',
+};
+
+const buildTableMenuUrl = (tableCode) => {
+  return `${window.location.origin}/table/${tableCode}/menu`;
+};
+
+const downloadTableQr = (table) => {
+  const canvas = document.getElementById(`table-qr-${table._id}`);
+  if (!canvas) return;
+
+  const pngUrl = canvas
+    .toDataURL('image/png')
+    .replace('image/png', 'image/octet-stream');
+
+  const link = document.createElement('a');
+  link.href = pngUrl;
+  link.download = `masa-${table.number}-qr.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const printTableCard = (table) => {
+  const canvas = document.getElementById(`table-qr-${table._id}`);
+  if (!canvas) return;
+
+  const qrImage = canvas.toDataURL('image/png');
+  const tableUrl = buildTableMenuUrl(table.code);
+
+  const printWindow = window.open('', '_blank', 'width=800,height=700');
+  if (!printWindow) return;
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Masa ${table.number} QR Kartı</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 24px;
+            margin: 0;
+            background: #f8fafc;
+          }
+
+          .card {
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            box-sizing: border-box;
+          }
+
+          .title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+          }
+
+          .meta {
+            color: #64748b;
+            margin-bottom: 10px;
+            line-height: 1.5;
+          }
+
+          .qr {
+            margin: 20px auto;
+            width: fit-content;
+          }
+
+          .qr img {
+            width: 220px;
+            height: 220px;
+            display: block;
+          }
+
+          .url {
+            word-break: break-all;
+            color: #8b5e3c;
+            font-size: 14px;
+            margin-top: 16px;
+            line-height: 1.5;
+          }
+
+          .note {
+            margin-top: 14px;
+            font-size: 14px;
+            color: #475569;
+          }
+
+          @media print {
+            body {
+              background: white;
+              padding: 0;
+            }
+
+            .card {
+              border: none;
+              box-shadow: none;
+              margin-top: 20px;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="title">Masa ${table.number}</div>
+          <div class="meta">Kod: ${table.code} · Kapasite: ${table.capacity}</div>
+          <div class="meta">${table.description || 'BaristaOne Masa Menüsü'}</div>
+          <div class="qr">
+            <img src="${qrImage}" alt="QR Kod" />
+          </div>
+          <div class="url">${tableUrl}</div>
+          <div class="note">Bu QR kod okutulduğunda masa menüsü açılır.</div>
+        </div>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+
+  setTimeout(() => {
+    printWindow.print();
+  }, 300);
 };
 
 const AdminTables = () => {
@@ -121,6 +249,17 @@ const AdminTables = () => {
     }
   };
 
+  const handleCopyLink = async (table) => {
+    try {
+      const tableUrl = buildTableMenuUrl(table.code);
+      await navigator.clipboard.writeText(tableUrl);
+      setMessage(`Masa ${table.number} linki kopyalandı`);
+      setError('');
+    } catch (err) {
+      setError('Link kopyalanamadı');
+    }
+  };
+
   if (loading) {
     return <Loading text="Masalar yükleniyor..." />;
   }
@@ -129,7 +268,7 @@ const AdminTables = () => {
     <div>
       <PageHeader
         title="Masa Yönetimi"
-        subtitle="Masaları ekle, düzenle ve QR altyapısına temel olacak yapıyı yönet."
+        subtitle="Masaları ekle, düzenle ve QR ile menü akışını yönet."
       />
 
       {message && <p className="message success">{message}</p>}
@@ -179,15 +318,13 @@ const AdminTables = () => {
                 onChange={handleFormChange}
               />
 
-              <label style={styles.checkboxRow}>
-                <input
-                  type="checkbox"
-                  name="isActive"
-                  checked={form.isActive}
-                  onChange={handleFormChange}
-                />
-                Masa aktif
-              </label>
+              <Checkbox
+                name="isActive"
+                checked={form.isActive}
+                onChange={handleFormChange}
+                label="Masa aktif"
+                description="Kapalıysa masa QR ile açılsa bile sipariş akışında kullanılmaz."
+              />
 
               <div style={styles.formActions}>
                 <Button type="submit" variant="primary">
@@ -251,44 +388,91 @@ const AdminTables = () => {
             />
           ) : (
             <div style={styles.list}>
-              {tables.map((table) => (
-                <Card key={table._id}>
-                  <CardBody>
-                    <div style={styles.tableRow}>
-                      <div>
-                        <div style={styles.topRow}>
-                          <h3>Masa {table.number}</h3>
-                          <span className="badge">
-                            {table.isActive ? 'Aktif' : 'Pasif'}
-                          </span>
+              {tables.map((table) => {
+                const tableUrl = buildTableMenuUrl(table.code);
+
+                return (
+                  <Card key={table._id}>
+                    <CardBody>
+                      <div style={styles.tableCard}>
+                        <div style={styles.tableInfo}>
+                          <div style={styles.topRow}>
+                            <h3>Masa {table.number}</h3>
+                            <span className="badge">
+                              {table.isActive ? 'Aktif' : 'Pasif'}
+                            </span>
+                          </div>
+
+                          <p style={styles.muted}>Kod: {table.code}</p>
+                          <p style={styles.muted}>Kapasite: {table.capacity}</p>
+                          <p style={styles.muted}>
+                            {table.description || 'Açıklama yok'}
+                          </p>
+
+                          <div style={styles.urlBox}>
+                            <strong>Masa Linki</strong>
+                            <a
+                              href={tableUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={styles.link}
+                            >
+                              {tableUrl}
+                            </a>
+                          </div>
+
+                          <div style={styles.actions}>
+                            <Button
+                              variant="secondary"
+                              onClick={() => handleEdit(table)}
+                            >
+                              Düzenle
+                            </Button>
+
+                            <Button
+                              variant="secondary"
+                              onClick={() => handleCopyLink(table)}
+                            >
+                              Linki Kopyala
+                            </Button>
+
+                            <Button
+                              variant="secondary"
+                              onClick={() => downloadTableQr(table)}
+                            >
+                              QR İndir
+                            </Button>
+
+                            <Button
+                              variant="secondary"
+                              onClick={() => printTableCard(table)}
+                            >
+                              Yazdır
+                            </Button>
+
+                            <Button
+                              variant="danger"
+                              onClick={() => handleDelete(table._id)}
+                            >
+                              Sil
+                            </Button>
+                          </div>
                         </div>
 
-                        <p style={styles.muted}>Kod: {table.code}</p>
-                        <p style={styles.muted}>Kapasite: {table.capacity}</p>
-                        <p style={styles.muted}>
-                          {table.description || 'Açıklama yok'}
-                        </p>
+                        <div style={styles.qrBox}>
+                          <QRCodeCanvas
+                            id={`table-qr-${table._id}`}
+                            value={tableUrl}
+                            size={160}
+                            includeMargin={true}
+                          />
+                          <p style={styles.qrText}>QR ile Menü Aç</p>
+                        </div>
                       </div>
-
-                      <div style={styles.actions}>
-                        <Button
-                          variant="secondary"
-                          onClick={() => handleEdit(table)}
-                        >
-                          Düzenle
-                        </Button>
-
-                        <Button
-                          variant="danger"
-                          onClick={() => handleDelete(table._id)}
-                        >
-                          Sil
-                        </Button>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              ))}
+                    </CardBody>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </div>
@@ -312,12 +496,14 @@ const styles = {
     display: 'grid',
     gap: '14px',
   },
-  tableRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '16px',
+  tableCard: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 200px',
+    gap: '20px',
     alignItems: 'center',
-    flexWrap: 'wrap',
+  },
+  tableInfo: {
+    minWidth: 0,
   },
   topRow: {
     display: 'flex',
@@ -329,10 +515,42 @@ const styles = {
   muted: {
     color: '#64748b',
   },
+  urlBox: {
+    marginTop: '14px',
+    padding: '12px',
+    borderRadius: '14px',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    display: 'grid',
+    gap: '8px',
+  },
+  link: {
+    color: '#8b5e3c',
+    wordBreak: 'break-all',
+    fontWeight: 600,
+  },
   actions: {
     display: 'flex',
     gap: '10px',
     flexWrap: 'wrap',
+    marginTop: '14px',
+  },
+  qrBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    padding: '16px',
+    borderRadius: '16px',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+  },
+  qrText: {
+    fontSize: '14px',
+    fontWeight: 700,
+    color: '#475569',
+    textAlign: 'center',
   },
 };
 

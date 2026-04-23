@@ -1,35 +1,64 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
   const location = useLocation();
+  const { userInfo } = useAuth();
 
-  const links = [
+  const role = userInfo?.user?.role;
+
+  const allLinks = [
     {
-      label: 'Dashboard',
+      label: 'Admin Dashboard',
       path: '/admin/dashboard',
       icon: '📊',
+      roles: ['admin'],
+    },
+    {
+      label: 'Owner Dashboard',
+      path: '/owner/dashboard',
+      icon: '👑',
+      roles: ['owner'],
     },
     {
       label: 'Menü Yönetimi',
       path: '/admin/menu',
       icon: '☕',
+      roles: ['admin', 'owner'],
     },
     {
       label: 'Kategoriler',
       path: '/admin/categories',
       icon: '🗂️',
+      roles: ['admin', 'owner'],
     },
     {
       label: 'Masalar',
       path: '/admin/tables',
       icon: '🪑',
+      roles: ['admin', 'owner'],
+    },
+    {
+      label: 'Kitchen',
+      path: '/admin/kitchen',
+      icon: '👨‍🍳',
+      roles: ['admin', 'owner', 'kitchen'],
+    },
+    {
+      label: 'Waiter',
+      path: '/admin/waiter',
+      icon: '🧑‍🍽️',
+      roles: ['admin', 'owner', 'waiter'],
     },
     {
       label: 'Sipariş Yönetimi',
       path: '/admin/orders',
       icon: '🧾',
+      roles: ['admin', 'owner'],
     },
   ];
+
+  const links = allLinks.filter((link) => link.roles.includes(role));
 
   return (
     <aside style={styles.sidebar}>
@@ -37,7 +66,7 @@ const Sidebar = () => {
         <div style={styles.logo}>B1</div>
         <div>
           <h2 style={styles.title}>BaristaOne</h2>
-          <p style={styles.subtitle}>Admin Panel</p>
+          <p style={styles.subtitle}>Control Panel</p>
         </div>
       </div>
 
