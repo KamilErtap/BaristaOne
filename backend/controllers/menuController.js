@@ -1,147 +1,66 @@
-const MenuItem = require('../models/MenuItem');
+const asyncHandler = require('../utils/asyncHandler');
+const { sendSuccess } = require('../utils/response');
 
-const getMenuItems = async (req, res, next) => {
-  try {
-    const { category, search, sort, available } = req.query;
+const {
+  getAllMenuItems,
+  getAllCategories,
+  getMenuItemOrThrow,
+  createMenuItemService,
+  updateMenuItemService,
+  deleteMenuItemService,
+} = require('../services/menuService');
 
-    const filter = {};
+const getMenuItems = asyncHandler(async (req, res) => {
+  const items = await getAllMenuItems(req.query);
 
-    if (category) {
-      filter.category = { $regex: new RegExp(`^${category}$`, 'i') };
-    }
+  return sendSuccess(res, 200, 'Menü ürünleri getirildi', {
+    items,
+  });
+});
 
-    if (search) {
-      filter.name = { $regex: search, $options: 'i' };
-    }
+const getMenuCategories = asyncHandler(async (req, res) => {
+  const categories = await getAllCategories();
 
-    if (available === 'true') {
-      filter.isAvailable = true;
-    }
+  return sendSuccess(res, 200, 'Kategoriler getirildi', {
+    categories,
+  });
+});
 
-    if (available === 'false') {
-      filter.isAvailable = false;
-    }
+const getMenuItemById = asyncHandler(async (req, res) => {
+  const item = await getMenuItemOrThrow(req.params.id);
 
-    let sortOption = { createdAt: -1 };
+  return sendSuccess(res, 200, 'Ürün getirildi', {
+    item,
+  });
+});
 
-    if (sort === 'price_asc') sortOption = { price: 1 };
-    if (sort === 'price_desc') sortOption = { price: -1 };
-    if (sort === 'name_asc') sortOption = { name: 1 };
-    if (sort === 'name_desc') sortOption = { name: -1 };
-    if (sort === 'newest') sortOption = { createdAt: -1 };
-    if (sort === 'oldest') sortOption = { createdAt: 1 };
+const createMenuItem = asyncHandler(async (req, res) => {
+  const item = await createMenuItemService(req.body);
 
-    const items = await MenuItem.find(filter).sort(sortOption);
+  return sendSuccess(res, 201, 'Ürün başarıyla eklendi', {
+    item,
+  });
+});
 
-    res.status(200).json(items);
-  } catch (error) {
-    next(error);
-  }
-};
+const updateMenuItem = asyncHandler(async (req, res) => {
+  const item = await updateMenuItemService(req.params.id, req.body);
 
-const getMenuItemById = async (req, res, next) => {
-  try {
-    const item = await MenuItem.findById(req.params.id);
+  return sendSuccess(res, 200, 'Ürün başarıyla güncellendi', {
+    item,
+  });
+});
 
-    if (!item) {
-      res.status(404);
-      throw new Error('Ürün bulunamadı');
-    }
+const deleteMenuItem = asyncHandler(async (req, res) => {
+  const result = await deleteMenuItemService(req.params.id);
 
-    res.status(200).json(item);
-  } catch (error) {
-    next(error);
-  }
-};
-
-const createMenuItem = async (req, res, next) => {
-  try {
-    const { name, description, price, category, image, isAvailable } = req.body;
-
-    if (!name || price === undefined || !category) {
-      res.status(400);
-      throw new Error('Ad, fiyat ve kategori zorunlu');
-    }
-
-    const newItem = await MenuItem.create({
-      name,
-      description,
-      price,
-      category,
-      image,
-      isAvailable,
-    });
-
-    res.status(201).json({
-      message: 'Ürün başarıyla eklendi',
-      item: newItem,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const updateMenuItem = async (req, res, next) => {
-  try {
-    const item = await MenuItem.findById(req.params.id);
-
-    if (!item) {
-      res.status(404);
-      throw new Error('Ürün bulunamadı');
-    }
-
-    item.name = req.body.name ?? item.name;
-    item.description = req.body.description ?? item.description;
-    item.price = req.body.price ?? item.price;
-    item.category = req.body.category ?? item.category;
-    item.image = req.body.image ?? item.image;
-    item.isAvailable = req.body.isAvailable ?? item.isAvailable;
-
-    const updatedItem = await item.save();
-
-    res.status(200).json({
-      message: 'Ürün başarıyla güncellendi',
-      item: updatedItem,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const deleteMenuItem = async (req, res, next) => {
-  try {
-    const item = await MenuItem.findById(req.params.id);
-
-    if (!item) {
-      res.status(404);
-      throw new Error('Ürün bulunamadı');
-    }
-
-    await item.deleteOne();
-
-    res.status(200).json({
-      message: 'Ürün başarıyla silindi',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getMenuCategories = async (req, res, next) => {
-  try {
-    const categories = await MenuItem.distinct('category');
-
-    res.status(200).json(categories);
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendSuccess(res, 200, 'Ürün başarıyla silindi', result);
+});
 
 module.exports = {
   getMenuItems,
+  getMenuCategories,
   getMenuItemById,
   createMenuItem,
   updateMenuItem,
   deleteMenuItem,
-  getMenuCategories,
 };

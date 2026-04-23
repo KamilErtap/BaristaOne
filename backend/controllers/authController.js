@@ -1,93 +1,39 @@
-const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const asyncHandler = require('../utils/asyncHandler');
+const { sendSuccess } = require('../utils/response');
 
-const registerUser = async (req, res, next) => {
-  try {
-    const { name, email, password } = req.body;
+const {
+  formatUser,
+  registerUserService,
+  loginUserService,
+} = require('../services/authService');
 
-    if (!name || !email || !password) {
-      res.status(400);
-      throw new Error('İsim, email ve şifre zorunlu');
-    }
+const registerUser = asyncHandler(async (req, res) => {
+  const user = await registerUserService(req.body);
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+  return sendSuccess(res, 201, 'Kayıt başarılı', {
+    token: generateToken(user._id),
+    user: formatUser(user),
+  });
+});
 
-    if (existingUser) {
-      res.status(400);
-      throw new Error('Bu email zaten kayıtlı');
-    }
+const loginUser = asyncHandler(async (req, res) => {
+  const user = await loginUserService(req.body);
 
-    const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password,
-      role: 'customer',
-    });
+  return sendSuccess(res, 200, 'Giriş başarılı', {
+    token: generateToken(user._id),
+    user: formatUser(user),
+  });
+});
 
-    res.status(201).json({
-      message: 'Kayıt başarılı',
-      token: generateToken(user._id),
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
+const getMe = asyncHandler(async (req, res) => {
+  return sendSuccess(res, 200, 'Kullanıcı bilgileri getirildi', {
+    user: formatUser(req.user),
+  });
+});
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getMe,
 };
-
-const loginUser = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      res.status(400);
-      throw new Error('Email ve şifre zorunlu');
-    }
-
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
-
-    if (!user) {
-      res.status(401);
-      throw new Error('Email veya şifre hatalı');
-    }
-
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-      res.status(401);
-      throw new Error('Email veya şifre hatalı');
-    }
-
-    res.status(200).json({
-      message: 'Giriş başarılı',
-      token: generateToken(user._id),
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getMe = async (req, res, next) => {
-  try {
-    res.status(200).json({
-      id: req.user._id,
-      name: req.user.name,
-      email: req.user.email,
-      role: req.user.role,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-module.exports = { registerUser, loginUser, getMe };

@@ -1,302 +1,220 @@
 import { useEffect, useState } from 'react';
-import api from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import { menuApi } from '../api/menuApi';
+import { getCategories, getItems } from '../api/responseHelpers';
 
-const initialForm = {
-  name: '',
-  description: '',
-  price: '',
-  category: '',
-  image: '',
-  isAvailable: true,
-};
+import PageHeader from '../components/common/PageHeader';
+import Button from '../components/common/Button';
+import Card, { CardBody } from '../components/common/Card';
+import EmptyState from '../components/common/EmptyState';
+import Loading from '../components/common/Loading';
+import Input from '../components/common/Input';
+import Select from '../components/common/Select';
 
 const AdminMenu = () => {
-  const [items, setItems] = useState([]);
-  const [form, setForm] = useState(initialForm);
-  const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [filters, setFilters] = useState({
+    search: '',
+    category: '',
+    sort: '',
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchCategories = async () => {
+    try {
+      const response = await menuApi.getCategories();
+      setCategories(getCategories(response));
+    } catch (err) {
+      console.error('Kategoriler alınamadı');
+    }
+  };
 
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get('/menu');
-      setItems(data);
+
+      const response = await menuApi.getMenuItems(filters);
+      setItems(getItems(response));
       setError('');
-    } catch (error) {
-      setError(error.response?.data?.message || 'Menü verileri alınamadı');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Menü verileri alınamadı');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchItems();
+    fetchCategories();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  useEffect(() => {
+    fetchItems();
+  }, [filters]);
 
-    setForm((prev) => ({
+  const handleFilterChange = (e) => {
+    setFilters((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [e.target.name]: e.target.value,
     }));
   };
 
-  const handleEdit = (item) => {
-    setEditingId(item._id);
-    setForm({
-      name: item.name,
-      description: item.description,
-      price: item.price,
-      category: item.category,
-      image: item.image,
-      isAvailable: item.isAvailable,
-    });
-    setMessage('');
-    setError('');
-  };
-
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setForm(initialForm);
-    setMessage('');
-    setError('');
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage('');
-    setError('');
-
-    try {
-      if (editingId) {
-        const { data } = await api.put(`/menu/${editingId}`, {
-          ...form,
-          price: Number(form.price),
-        });
-        setMessage(data.message || 'Ürün güncellendi');
-      } else {
-        const { data } = await api.post('/menu', {
-          ...form,
-          price: Number(form.price),
-        });
-        setMessage(data.message || 'Ürün eklendi');
-      }
-
-      setForm(initialForm);
-      setEditingId(null);
-      fetchItems();
-    } catch (error) {
-      setError(error.response?.data?.message || 'İşlem başarısız');
-    }
-  };
-
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm('Bu ürünü silmek istediğine emin misin?');
-    if (!confirmed) return;
-
-    try {
-      const { data } = await api.delete(`/menu/${id}`);
-      setMessage(data.message || 'Ürün silindi');
-      fetchItems();
-
-      if (editingId === id) {
-        handleCancelEdit();
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || 'Silme işlemi başarısız');
-    }
-  };
+  if (loading) {
+    return <Loading text="Ürünler yükleniyor..." />;
+  }
 
   return (
-    <div className="page-container">
-      <div style={styles.formBox}>
-        <h1 className="page-title">Admin Menü Yönetimi</h1>
-        <p className="page-subtitle">
-          Ürün ekle, güncelle, sil ve menüyü canlı tut.
-        </p>
-        <h2>{editingId ? 'Ürün Güncelle' : 'Yeni Ürün Ekle'}</h2>
+    <div>
+      <PageHeader
+        title="Menü Yönetimi"
+        subtitle="Menüdeki ürünleri görüntüle, filtrele ve düzenle."
+        actions={
+          <Button variant="primary" onClick={() => navigate('/admin/menu/new')}>
+            Yeni Ürün Ekle
+          </Button>
+        }
+      />
 
-        {message && <p style={styles.success}>{message}</p>}
-        {error && <p style={styles.error}>{error}</p>}
+      <div className="admin-filter-box">
+        <Input
+          name="search"
+          placeholder="Ürün ara..."
+          value={filters.search}
+          onChange={handleFilterChange}
+        />
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Ürün adı"
-            value={form.name}
-            onChange={handleChange}
-          />
+        <Select
+          name="category"
+          value={filters.category}
+          onChange={handleFilterChange}
+        >
+          <option value="">Tüm Kategoriler</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </Select>
 
-          <input
-            type="text"
-            name="description"
-            placeholder="Açıklama"
-            value={form.description}
-            onChange={handleChange}
-          />
-
-          <input
-            type="number"
-            name="price"
-            placeholder="Fiyat"
-            value={form.price}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="category"
-            placeholder="Kategori"
-            value={form.category}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="image"
-            placeholder="Görsel URL"
-            value={form.image}
-            onChange={handleChange}
-          />
-
-          <label style={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              name="isAvailable"
-              checked={form.isAvailable}
-              onChange={handleChange}
-            />
-            Ürün mevcut
-          </label>
-
-          <button type="submit">
-            {editingId ? 'Güncelle' : 'Ekle'}
-          </button>
-
-          {editingId && (
-            <button type="button" onClick={handleCancelEdit}>
-              İptal
-            </button>
-          )}
-        </form>
+        <Select
+          name="sort"
+          value={filters.sort}
+          onChange={handleFilterChange}
+        >
+          <option value="">Varsayılan Sıralama</option>
+          <option value="price_asc">Fiyat Artan</option>
+          <option value="price_desc">Fiyat Azalan</option>
+          <option value="name_asc">İsim A-Z</option>
+          <option value="name_desc">İsim Z-A</option>
+          <option value="newest">En Yeni</option>
+          <option value="oldest">En Eski</option>
+        </Select>
       </div>
 
-      <div style={styles.listBox}>
-        <h2>Menü Ürünleri</h2>
+      {error && <p className="message error">{error}</p>}
 
-        {loading && <p>Ürünler yükleniyor...</p>}
+      {!error && items.length === 0 && (
+        <EmptyState
+          title="Ürün bulunamadı"
+          description="Yeni ürün ekleyebilir veya filtreleri değiştirebilirsin."
+        />
+      )}
 
-        {!loading && items.length === 0 && <p>Henüz ürün yok.</p>}
-
-        {!loading && items.length > 0 && (
-          <div className="panel-grid">
-            {items.map((item) => (
-              <div key={item._id} style={styles.card}>
-                <h3>{item.name}</h3>
-                {item.image ? (
+      {!error && items.length > 0 && (
+        <div style={styles.grid}>
+          {items.map((item) => (
+            <Card key={item._id} style={{ overflow: 'hidden' }}>
+              {item.image ? (
                 <img
                   src={item.image}
                   alt={item.name}
-                  style={{
-                    width: '100%',
-                    height: '160px',
-                    objectFit: 'cover',
-                    borderRadius: '12px',
-                    marginBottom: '12px',
-                  }}
+                  style={styles.image}
                 />
-                ) : (
-                <div
-                  style={{
-                    width: '100%',
-                    height: '160px',
-                    display: 'grid',
-                    placeItems: 'center',
-                    background: '#e2e8f0',
-                    borderRadius: '12px',
-                    marginBottom: '12px',
-                    color: '#64748b',
-                    fontWeight: 600,
-                  }}
-                >
-                Görsel Yok
-                </div>
-                )}
-                <p>{item.description}</p>
-                <p><strong>Kategori:</strong> {item.category}</p>
-                <p><strong>Fiyat:</strong> {item.price} TL</p>
-                <p>
-                  <strong>Durum:</strong>{' '}
-                  {item.isAvailable ? 'Müsait' : 'Tükendi'}
-                </p>
+              ) : (
+                <div style={styles.placeholder}>Görsel Yok</div>
+              )}
 
-                <div style={styles.actions}>
-                  <button onClick={() => navigate(`/admin/menu/${item._id}`)}>Düzenle</button>
-                  <button onClick={() => handleDelete(item._id)}>Sil</button>
+              <CardBody>
+                <div style={styles.topRow}>
+                  <span className="badge">{item.category}</span>
+                  <span className="badge">
+                    {item.isAvailable ? 'Müsait' : 'Tükendi'}
+                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+
+                <h3 style={styles.title}>{item.name}</h3>
+                <p style={styles.description}>{item.description}</p>
+
+                <div style={styles.bottom}>
+                  <strong style={styles.price}>{item.price} TL</strong>
+
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate(`/admin/menu/${item._id}`)}
+                  >
+                    Detay / Düzenle
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 const styles = {
-  page: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 2fr',
-    gap: '24px',
-    padding: '24px',
-  },
-  formBox: {
-    background: '#fff',
-    borderRadius: '10px',
-    padding: '20px',
-    height: 'fit-content',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-  },
-  listBox: {},
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    marginTop: '16px',
-  },
-  checkboxRow: {
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-  },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-    gap: '16px',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+    gap: '18px',
+  },
+  image: {
+    width: '100%',
+    height: '180px',
+    objectFit: 'cover',
+    display: 'block',
+  },
+  placeholder: {
+    width: '100%',
+    height: '180px',
+    display: 'grid',
+    placeItems: 'center',
+    background: '#e2e8f0',
+    color: '#64748b',
+    fontWeight: 700,
+  },
+  topRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '8px',
+    flexWrap: 'wrap',
+    marginBottom: '14px',
+  },
+  title: {
+    fontSize: '20px',
+    marginBottom: '8px',
+  },
+  description: {
+    color: '#64748b',
+    minHeight: '48px',
+  },
+  bottom: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '12px',
+    flexWrap: 'wrap',
     marginTop: '16px',
   },
-  card: {
-    background: '#fff',
-    borderRadius: '10px',
-    padding: '16px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-  },
-  actions: {
-    display: 'flex',
-    gap: '10px',
-    marginTop: '12px',
-  },
-  success: {
-    color: 'green',
-  },
-  error: {
-    color: 'red',
+  price: {
+    fontSize: '20px',
+    color: '#8b5e3c',
   },
 };
 

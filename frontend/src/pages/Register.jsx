@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api/axios';
+import { authApi } from '../api/authApi';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
@@ -27,8 +27,8 @@ const Register = () => {
     setError('');
 
     try {
-      const { data } = await api.post('/auth/register', form);
-      login(data);
+      const response = await authApi.register(form);
+      login(response);
       navigate('/menu');
     } catch (err) {
       setError(err.response?.data?.message || 'Kayıt başarısız');

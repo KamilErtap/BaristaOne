@@ -6,7 +6,8 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "seed:admin": "node ./scripts/createAdmin.js",
-    "seed:menu": "node ./scripts/seedMenu.js"
+    "seed:menu": "node ./scripts/seedMenu.js",
+    "seed:categories": "node ./scripts/seedCategories.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -15,6 +16,7 @@
     "debug": "~2.6.9",
     "dotenv": "^17.4.0",
     "express": "~4.16.1",
+    "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
     "morgan": "~1.9.1"

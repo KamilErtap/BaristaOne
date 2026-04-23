@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const { userInfo, logout } = useAuth();
   const navigate = useNavigate();
+  const { totalItems } = useCart();
 
   const handleLogout = () => {
     logout();
@@ -21,11 +23,19 @@ const Navbar = () => {
           <Link to="/menu" style={styles.link}>Menü</Link>
 
           {userInfo && userInfo.user.role === 'customer' && (
-            <Link to="/orders" style={styles.link}>Siparişlerim</Link>
+            <>
+              <Link to="/cart" style={styles.link}>
+                Sepet ({totalItems})
+              </Link>
+              <Link to="/orders" style={styles.link}>
+                Siparişlerim
+              </Link>
+            </>
           )}
-
+          
           {userInfo && userInfo.user.role === 'admin' && (
             <>
+              <Link to="/admin/dashboard" style={styles.link}>Dashboard</Link>
               <Link to="/admin/menu" style={styles.link}>Menü Yönetimi</Link>
               <Link to="/admin/orders" style={styles.link}>Sipariş Yönetimi</Link>
             </>

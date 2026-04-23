@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import api from '../api/axios';
+import { orderApi } from '../api/orderApi';
+import { getOrders } from '../api/responseHelpers';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -15,13 +16,9 @@ const Orders = () => {
     try {
       setLoading(true);
 
-      const query = new URLSearchParams();
+      const response = await orderApi.getMyOrders(filters);
+      setOrders(getOrders(response));
 
-      if (filters.status) query.append('status', filters.status);
-      if (filters.sort) query.append('sort', filters.sort);
-
-      const { data } = await api.get(`/orders/my-orders?${query.toString()}`);
-      setOrders(data);
       setError('');
     } catch (error) {
       setError(error.response?.data?.message || 'Siparişler alınamadı');

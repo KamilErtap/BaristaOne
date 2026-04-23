@@ -10,6 +10,12 @@ import AdminMenu from './pages/AdminMenu';
 import AdminOrders from './pages/AdminOrders';
 import MenuDetail from './pages/MenuDetail';
 import AdminMenuDetail from './pages/AdminMenuDetail';
+import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import AdminLayout from './components/layout/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminMenuCreate from './pages/AdminMenuCreate';
+import AdminCategories from './pages/AdminCategories';
 
 function App() {
   return (
@@ -22,6 +28,14 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/menu/:id" element={<MenuDetail />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <Navigate to="/admin/dashboard" replace />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/orders"
@@ -33,19 +47,52 @@ function App() {
         />
 
         <Route
-          path="/admin/menu"
+          path="/cart"
           element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminMenu />
+            <ProtectedRoute>
+              <Cart />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/admin/orders"
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/dashboard"
           element={
             <ProtectedRoute adminOnly={true}>
-              <AdminOrders />
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/menu"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout>
+                <AdminMenu />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/menu/new"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout>
+                <AdminMenuCreate />
+              </AdminLayout>
             </ProtectedRoute>
           }
         />
@@ -54,7 +101,31 @@ function App() {
           path="/admin/menu/:id"
           element={
             <ProtectedRoute adminOnly={true}>
-              <AdminMenuDetail />
+              <AdminLayout>
+                <AdminMenuDetail />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/categories"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout>
+                <AdminCategories />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout>
+                <AdminOrders />
+              </AdminLayout>
             </ProtectedRoute>
           }
         />

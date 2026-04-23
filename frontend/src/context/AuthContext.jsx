@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import api from '../api/axios';
+import { authApi } from '../api/authApi';
+import { getAuthPayload } from '../api/responseHelpers';
 
 const AuthContext = createContext();
 
@@ -19,11 +20,14 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const { data } = await api.get('/auth/me');
+        const response = await authApi.getMe();
+
+        const responseData = getAuthPayload(response);
+        const currentUser = responseData.user || responseData;
 
         const updatedUser = {
           token: userInfo.token,
-          user: data,
+          user: currentUser,
         };
 
         setUserInfo(updatedUser);
@@ -39,10 +43,14 @@ export const AuthProvider = ({ children }) => {
     checkUser();
   }, []);
 
-  const login = (data) => {
+  const login = (responseOrPayload) => {
+    const payloadData = responseOrPayload?.data
+      ? getAuthPayload(responseOrPayload)
+      : responseOrPayload?.data || responseOrPayload;
+
     const payload = {
-      token: data.token,
-      user: data.user,
+      token: payloadData.token,
+      user: payloadData.user,
     };
 
     setUserInfo(payload);

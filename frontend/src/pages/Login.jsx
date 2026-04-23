@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api/axios';
+import { authApi } from '../api/authApi';
+import { getAuthPayload } from '../api/responseHelpers';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -26,11 +27,15 @@ const Login = () => {
     setError('');
 
     try {
-      const { data } = await api.post('/auth/login', form);
-      login(data);
+      const response = await authApi.login(form);
 
-      if (data.user.role === 'admin') {
-        navigate('/admin/menu');
+      login(response);
+
+      const responseData = getAuthPayload(response);
+      const user = responseData.user;
+
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard');
       } else {
         navigate('/menu');
       }

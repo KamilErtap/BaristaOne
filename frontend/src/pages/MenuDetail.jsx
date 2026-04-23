@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import api from '../api/axios';
+import { menuApi } from '../api/menuApi';
+import { getItem } from '../api/responseHelpers';
+import { orderApi } from '../api/orderApi';
 import { useAuth } from '../context/AuthContext';
 
 const MenuDetail = () => {
@@ -20,8 +22,8 @@ const MenuDetail = () => {
   const fetchItem = async () => {
     try {
       setLoading(true);
-      const { data } = await api.get(`/menu/${id}`);
-      setItem(data);
+      const response = await menuApi.getMenuItemById(id);
+      setItem(getItem(response));
       setError('');
     } catch (err) {
       setError(err.response?.data?.message || 'Ürün bilgisi alınamadı');
@@ -65,8 +67,17 @@ const MenuDetail = () => {
         paymentStatus: 'paid',
       };
 
-      const { data } = await api.post('/orders', payload);
-      setMessage(data.message || 'Sipariş oluşturuldu.');
+      const response = await orderApi.createOrder({
+        cart: [
+          {
+            ...item,
+            quantity: Number(quantity),
+          },
+        ],
+        tableNumber,
+      });
+
+      setMessage(response.data?.message || 'Sipariş oluşturuldu.');
       setTableNumber('');
       setQuantity(1);
     } catch (err) {
