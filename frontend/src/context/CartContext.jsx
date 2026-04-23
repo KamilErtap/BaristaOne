@@ -3,6 +3,7 @@ import { createContext, useContext, useMemo, useState } from 'react';
 const CartContext = createContext();
 
 const STORAGE_KEY = 'baristaOneCart';
+const TABLE_STORAGE_KEY = 'baristaOneSelectedTable';
 
 const getInitialCart = () => {
   try {
@@ -13,8 +14,18 @@ const getInitialCart = () => {
   }
 };
 
+const getInitialTable = () => {
+  try {
+    const stored = localStorage.getItem(TABLE_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+};
+
 export const CartProvider = ({ children }) => {
   const [cart, setCartState] = useState(getInitialCart);
+  const [selectedTable, setSelectedTableState] = useState(getInitialTable);
 
   const setCart = (updater) => {
     setCartState((prev) => {
@@ -22,6 +33,16 @@ export const CartProvider = ({ children }) => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       return next;
     });
+  };
+
+  const setSelectedTable = (table) => {
+    setSelectedTableState(table);
+
+    if (table) {
+      localStorage.setItem(TABLE_STORAGE_KEY, JSON.stringify(table));
+    } else {
+      localStorage.removeItem(TABLE_STORAGE_KEY);
+    }
   };
 
   const addToCart = (item, quantity = 1) => {
@@ -98,6 +119,8 @@ export const CartProvider = ({ children }) => {
         clearCart,
         totalPrice,
         totalItems,
+        selectedTable,
+        setSelectedTable,
       }}
     >
       {children}

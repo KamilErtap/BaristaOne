@@ -7,6 +7,7 @@ const {
   createTableService,
   updateTableService,
   deleteTableService,
+  getTableByCodeOrThrow,
 } = require('../services/tableService');
 
 const getTables = asyncHandler(async (req, res) => {
@@ -19,6 +20,14 @@ const getTables = asyncHandler(async (req, res) => {
 
 const getTableById = asyncHandler(async (req, res) => {
   const table = await getTableOrThrow(req.params.id);
+
+  return sendSuccess(res, 200, 'Masa getirildi', {
+    table,
+  });
+});
+
+const getTableByCode = asyncHandler(async (req, res) => {
+  const table = await getTableByCodeOrThrow(req.params.code);
 
   return sendSuccess(res, 200, 'Masa getirildi', {
     table,
@@ -50,6 +59,7 @@ const deleteTable = asyncHandler(async (req, res) => {
 module.exports = {
   getTables,
   getTableById,
+  getTableByCode,
   createTable,
   updateTable,
   deleteTable,

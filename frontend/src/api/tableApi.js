@@ -13,6 +13,10 @@ export const tableApi = {
     return api.get(`/tables?${query.toString()}`);
   },
 
+  getTableByCode: (code) => {
+    return api.get(`/tables/code/${code}`);
+  },
+
   getTableById: (id) => {
     return api.get(`/tables/${id}`);
   },

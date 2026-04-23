@@ -17,6 +17,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminMenuCreate from './pages/AdminMenuCreate';
 import AdminCategories from './pages/AdminCategories';
 import AdminTables from './pages/AdminTables';
+import TableMenu from './pages/TableMenu';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/menu/:id" element={<MenuDetail />} />
+        <Route path="/table/:tableCode/menu" element={<TableMenu />} />
         <Route
           path="/admin"
           element={

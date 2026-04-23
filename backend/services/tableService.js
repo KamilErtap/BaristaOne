@@ -119,9 +119,30 @@ const deleteTableService = async (id) => {
   return { deletedId: id };
 };
 
+const getTableByCodeOrThrow = async (code) => {
+  const table = await Table.findOne({
+    code: { $regex: new RegExp(`^${code}$`, 'i') },
+  });
+
+  if (!table) {
+    const error = new Error('Masa bulunamadı');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (!table.isActive) {
+    const error = new Error('Bu masa şu anda aktif değil');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return table;
+};
+
 module.exports = {
   getAllTablesService,
   getTableOrThrow,
+  getTableByCodeOrThrow,
   createTableService,
   updateTableService,
   deleteTableService,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { orderApi } from '../api/orderApi';
 import { useAuth } from '../context/AuthContext';
@@ -19,9 +19,18 @@ const Checkout = () => {
     clearCart,
     totalPrice,
     totalItems,
+    selectedTable,
   } = useCart();
 
-  const [tableNumber, setTableNumber] = useState('');
+  useEffect(() => {
+    if (selectedTable?.number) {
+      setTableNumber(String(selectedTable.number));
+    }
+  }, [selectedTable]);
+
+  const [tableNumber, setTableNumber] = useState(
+    selectedTable?.number ? String(selectedTable.number) : ''
+  );
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -119,6 +128,15 @@ const Checkout = () => {
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
               />
+
+              {selectedTable && (
+                <div style={styles.tableInfoBox}>
+                  <strong>Seçili Masa</strong>
+                  <p style={styles.muted}>
+                    Masa {selectedTable.number} · Kod: {selectedTable.code}
+                  </p>
+                </div>
+              )}
 
               <div style={styles.paymentBox}>
                 <strong>Ödeme Durumu</strong>
@@ -223,6 +241,12 @@ const styles = {
     marginTop: '16px',
     padding: '10px 14px',
     borderRadius: '12px',
+  },
+  tableInfoBox: {
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    borderRadius: '14px',
+    padding: '14px',
   },
 };
 

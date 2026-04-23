@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   getTables,
   getTableById,
+  getTableByCode,
   createTable,
   updateTable,
   deleteTable,
@@ -15,6 +16,7 @@ const validate = require('../middleware/validateMiddleware');
 const { tableValidator } = require('../validators/tableValidator');
 
 router.get('/', getTables);
+router.get('/code/:code', getTableByCode);
 router.get('/:id', getTableById);
 
 router.post('/', protect, adminOnly, tableValidator, validate, createTable);
