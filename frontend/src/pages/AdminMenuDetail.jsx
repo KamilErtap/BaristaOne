@@ -41,15 +41,17 @@ const AdminMenuDetail = () => {
       const response = await menuApi.getMenuItemById(id);
       const item = getItem(response);
 
-      setForm({
+      const normalizedItem = {
         name: item.name || '',
         description: item.description || '',
         price: item.price || '',
         category: item.category || '',
         image: item.image || '',
         isAvailable: item.isAvailable ?? true,
-      });
+      };
 
+      setForm(normalizedItem);
+      setOriginalItem(normalizedItem);
       setError('');
     } catch (err) {
       setError(err.response?.data?.message || 'Ürün bilgisi alınamadı');
@@ -115,8 +117,7 @@ const AdminMenuDetail = () => {
       setSaving(true);
 
       const response = await menuApi.updateMenuItem(id, form);
-
-      const updatedItem = response.data.item || response.data;
+      const updatedItem = getItem(response);
 
       const nextOriginal = {
         name: updatedItem.name || form.name,
@@ -131,6 +132,7 @@ const AdminMenuDetail = () => {
       setForm(nextOriginal);
       setMessage(response.data?.message || 'Ürün güncellendi');
     } catch (err) {
+      console.log('UPDATE ERROR:', err.response?.data || err);
       setError(err.response?.data?.message || 'Güncelleme başarısız.');
     } finally {
       setSaving(false);
