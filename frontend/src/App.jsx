@@ -16,6 +16,7 @@ import AdminLayout from './components/layout/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminMenuCreate from './pages/AdminMenuCreate';
 import AdminCategories from './pages/AdminCategories';
+import AdminTables from './pages/AdminTables';
 
 function App() {
   return (
@@ -114,6 +115,17 @@ function App() {
             <ProtectedRoute adminOnly={true}>
               <AdminLayout>
                 <AdminCategories />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/tables"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminLayout>
+                <AdminTables />
               </AdminLayout>
             </ProtectedRoute>
           }

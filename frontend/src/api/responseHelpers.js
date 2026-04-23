@@ -40,3 +40,13 @@ export const getCategoryList = (response) => {
   const data = unwrapData(response);
   return data.categories || response.data;
 };
+
+export const getTable = (response) => {
+  const data = unwrapData(response);
+  return data.table || response.data;
+};
+
+export const getTables = (response) => {
+  const data = unwrapData(response);
+  return data.tables || response.data;
+};

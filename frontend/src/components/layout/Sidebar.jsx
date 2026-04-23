@@ -20,6 +20,11 @@ const Sidebar = () => {
       icon: '🗂️',
     },
     {
+      label: 'Masalar',
+      path: '/admin/tables',
+      icon: '🪑',
+    },
+    {
       label: 'Sipariş Yönetimi',
       path: '/admin/orders',
       icon: '🧾',
