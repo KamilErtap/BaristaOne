@@ -12,6 +12,8 @@ const env = {
   adminName: process.env.ADMIN_NAME || 'Admin',
   adminEmail: process.env.ADMIN_EMAIL || 'admin@example.com',
   adminPassword: process.env.ADMIN_PASSWORD || '',
+
+  cacheEnabled: process.env.CACHE_ENABLED === 'true',
 };
 
 module.exports = env;
