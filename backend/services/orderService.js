@@ -3,7 +3,7 @@ const MenuItem = require('../models/MenuItem');
 const { ORDER_STATUS } = require('../constants/orderStatus');
 const { PAYMENT_STATUS } = require('../constants/paymentStatus');
 const { SORT_OPTIONS } = require('../constants/sortOptions');
-const { QUEUES } = require('../constants/queues');
+const QUEUES = require('../constants/queues');
 const { publishToQueue } = require('../utils/producer');
 
 const buildOrderSort = (sort) => {

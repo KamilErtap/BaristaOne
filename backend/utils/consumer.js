@@ -2,37 +2,48 @@ const { getRabbitChannel } = require('../config/rabbitmq');
 const logger = require('./logger');
 
 const consumeQueue = async (queueName, handler) => {
+  if (process.env.NODE_ENV === 'test') {
+    return false;
+  }
+
   try {
     const channel = await getRabbitChannel();
+
+    if (!channel) {
+      logger.error(`RabbitMQ channel bulunamadı (${queueName})`);
+      return false;
+    }
 
     await channel.assertQueue(queueName, {
       durable: true,
     });
 
-    logger.info(`Queue dinleniyor: ${queueName}`);
+    await channel.prefetch(1);
 
-    channel.consume(queueName, async (message) => {
-      if (!message) {
-        return;
-      }
+    await channel.consume(queueName, async (message) => {
+      if (!message) return;
 
       try {
-        const content = JSON.parse(message.content.toString());
+        const payload = JSON.parse(message.content.toString());
 
-        await handler(content);
+        await handler(payload);
 
         channel.ack(message);
       } catch (error) {
-        logger.error(`Queue işleme hatası (${queueName}): ${error.message}`);
+        logger.error(
+          `Kuyruk mesajı işlenemedi (${queueName}): ${error.message}`
+        );
+
         channel.nack(message, false, false);
       }
     });
+
+    logger.info(`Kuyruk dinleniyor (${queueName})`);
+    return true;
   } catch (error) {
-    logger.error(`Queue dinlenemedi (${queueName}): ${error.message}`);
-    throw error;
+    logger.error(`Kuyruk dinlenemedi (${queueName}): ${error.message}`);
+    return false;
   }
 };
 
-module.exports = {
-  consumeQueue,
-};
+module.exports = consumeQueue;
