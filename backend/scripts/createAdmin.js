@@ -1,31 +1,33 @@
-const dotenv = require('dotenv');
 const connectDB = require('../config/db');
+const env = require('../config/env');
+const logger = require('../utils/logger');
 const User = require('../models/User');
-
-dotenv.config();
+const ROLES = require('../constants/roles');
 
 const createAdmin = async () => {
   try {
     await connectDB();
 
-    const existingAdmin = await User.findOne({ email: process.env.ADMIN_EMAIL });
+    const existingAdmin = await User.findOne({
+      email: env.adminEmail.toLowerCase(),
+    });
 
     if (existingAdmin) {
-      console.log('Admin zaten mevcut');
-      process.exit();
+      logger.warn('Admin zaten mevcut');
+      process.exit(0);
     }
 
     const admin = await User.create({
-      name: process.env.ADMIN_NAME,
-      email: process.env.ADMIN_EMAIL,
-      password: process.env.ADMIN_PASSWORD,
-      role: 'admin',
+      name: env.adminName,
+      email: env.adminEmail.toLowerCase(),
+      password: env.adminPassword,
+      role: ROLES.ADMIN,
     });
 
-    console.log('Admin oluşturuldu:', admin.email);
-    process.exit();
+    logger.info(`Admin oluşturuldu: ${admin.email}`);
+    process.exit(0);
   } catch (error) {
-    console.error('Admin oluşturulamadı:', error.message);
+    logger.error(`Admin oluşturulamadı: ${error.message}`);
     process.exit(1);
   }
 };

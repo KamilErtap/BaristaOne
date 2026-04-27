@@ -20,6 +20,7 @@ import AdminMenuDetail from './pages/AdminMenuDetail';
 import AdminOrders from './pages/AdminOrders';
 import AdminCategories from './pages/AdminCategories';
 import AdminTables from './pages/AdminTables';
+import AdminEventLogs from './pages/AdminEventLogs';
 import KitchenScreen from './pages/KitchenScreen';
 import WaiterScreen from './pages/WaiterScreen';
 import OwnerDashboard from './pages/OwnerDashboard';
@@ -50,7 +51,7 @@ function App() {
         <Route
           path="/cart"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER]}>
               <Cart />
             </ProtectedRoute>
           }
@@ -59,7 +60,7 @@ function App() {
         <Route
           path="/checkout"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER]}>
               <Checkout />
             </ProtectedRoute>
           }
@@ -68,7 +69,7 @@ function App() {
         <Route
           path="/orders"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={[ROLES.CUSTOMER]}>
               <Orders />
             </ProtectedRoute>
           }
@@ -166,6 +167,17 @@ function App() {
             <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.OWNER]}>
               <AdminLayout>
                 <AdminOrders />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/event-logs"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.OWNER]}>
+              <AdminLayout>
+                <AdminEventLogs />
               </AdminLayout>
             </ProtectedRoute>
           }

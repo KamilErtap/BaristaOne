@@ -4,6 +4,18 @@ import { authApi } from '../api/authApi';
 import { getAuthPayload } from '../api/responseHelpers';
 import { useAuth } from '../context/AuthContext';
 
+const getRedirectPathByRole = (role) => {
+  const redirects = {
+    admin: '/admin/dashboard',
+    owner: '/owner/dashboard',
+    kitchen: '/admin/kitchen',
+    waiter: '/admin/waiter',
+    customer: '/menu',
+  };
+
+  return redirects[role] || '/menu';
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -34,11 +46,7 @@ const Login = () => {
       const responseData = getAuthPayload(response);
       const user = responseData.user;
 
-      if (user.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/menu');
-      }
+      navigate(getRedirectPathByRole(user.role));
     } catch (err) {
       setError(err.response?.data?.message || 'Giriş başarısız');
     }

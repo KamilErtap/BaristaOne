@@ -1,8 +1,8 @@
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
-const logger = require('morgan');
+const morgan = require('morgan');
 const cors = require('cors');
+const env = require('./config/env');
 
 const authRoutes = require('./routes/auth');
 const menuRoutes = require('./routes/menu');
@@ -10,12 +10,15 @@ const orderRoutes = require('./routes/orders');
 const categoryRoutes = require('./routes/categories');
 const tableRoutes = require('./routes/tables');
 const reportRoutes = require('./routes/reports');
+const eventLogRoutes = require('./routes/eventLog.routes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 
+const morganMode = env.nodeEnv === 'production' ? 'combined' : 'dev';
+
 app.use(cors());
-app.use(logger('dev'));
+app.use(morgan(morganMode));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -34,6 +37,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/event-logs', eventLogRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

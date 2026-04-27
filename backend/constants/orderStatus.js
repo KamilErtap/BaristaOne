@@ -1,0 +1,18 @@
+const ORDER_STATUS = {
+  RECEIVED: 'received',
+  PREPARING: 'preparing',
+  READY: 'ready',
+  DELIVERED: 'delivered',
+};
+
+const ORDER_STATUS_LIST = [
+  ORDER_STATUS.RECEIVED,
+  ORDER_STATUS.PREPARING,
+  ORDER_STATUS.READY,
+  ORDER_STATUS.DELIVERED,
+];
+
+module.exports = {
+  ORDER_STATUS,
+  ORDER_STATUS_LIST,
+};

@@ -1,14 +1,13 @@
 const app = require('./app');
-const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-
-dotenv.config();
+const { connectRedis } = require('./config/redis');
 
 let isConnected = false;
 
 module.exports = async (req, res) => {
   if (!isConnected) {
     await connectDB();
+    await connectRedis();
     isConnected = true;
   }
 

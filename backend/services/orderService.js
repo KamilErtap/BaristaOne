@@ -1,15 +1,20 @@
 const Order = require('../models/Order');
 const MenuItem = require('../models/MenuItem');
+const { ORDER_STATUS } = require('../constants/orderStatus');
+const { PAYMENT_STATUS } = require('../constants/paymentStatus');
+const { SORT_OPTIONS } = require('../constants/sortOptions');
+const { QUEUES } = require('../constants/queues');
+const { publishToQueue } = require('../utils/producer');
 
 const buildOrderSort = (sort) => {
   let sortOption = { createdAt: -1 };
 
-  if (sort === 'newest') sortOption = { createdAt: -1 };
-  if (sort === 'oldest') sortOption = { createdAt: 1 };
-  if (sort === 'price_asc') sortOption = { totalPrice: 1 };
-  if (sort === 'price_desc') sortOption = { totalPrice: -1 };
-  if (sort === 'table_asc') sortOption = { tableNumber: 1 };
-  if (sort === 'table_desc') sortOption = { tableNumber: -1 };
+  if (sort === SORT_OPTIONS.NEWEST) sortOption = { createdAt: -1 };
+  if (sort === SORT_OPTIONS.OLDEST) sortOption = { createdAt: 1 };
+  if (sort === SORT_OPTIONS.PRICE_ASC) sortOption = { totalPrice: 1 };
+  if (sort === SORT_OPTIONS.PRICE_DESC) sortOption = { totalPrice: -1 };
+  if (sort === SORT_OPTIONS.TABLE_ASC) sortOption = { tableNumber: 1 };
+  if (sort === SORT_OPTIONS.TABLE_DESC) sortOption = { tableNumber: -1 };
 
   return sortOption;
 };
@@ -33,7 +38,7 @@ const getOrderOrThrow = async (id) => {
 };
 
 const createOrderService = async ({ items, tableNumber, paymentStatus, customerId }) => {
-  if (paymentStatus !== 'paid') {
+  if (paymentStatus !== PAYMENT_STATUS.PAID) {
     const error = new Error('Sipariş ancak ödeme yapıldıktan sonra oluşturulabilir');
     error.statusCode = 400;
     throw error;
@@ -75,9 +80,18 @@ const createOrderService = async ({ items, tableNumber, paymentStatus, customerI
     items: builtItems,
     tableNumber,
     totalPrice,
-    paymentStatus: 'paid',
-    orderStatus: 'received',
+    paymentStatus: PAYMENT_STATUS.PAID,
+    orderStatus: ORDER_STATUS.RECEIVED,
   });
+
+  if (process.env.NODE_ENV !== 'test') {
+    await publishToQueue(QUEUES.ORDER_CREATED, {
+      orderId: order._id,
+      tableNumber: order.tableNumber,
+      customerId,
+      totalPrice: order.totalPrice,
+    });
+  }
 
   const populatedOrder = await populateOrderQuery(Order.findById(order._id));
   return populatedOrder;

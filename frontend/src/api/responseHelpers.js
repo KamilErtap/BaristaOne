@@ -54,3 +54,8 @@ export const getTables = (response) => {
 export const getReportData = (response) => {
   return unwrapData(response);
 };
+
+export const getEventLogs = (response) => {
+  const data = unwrapData(response);
+  return data.logs || data.eventLogs || data.items || response.data;
+};

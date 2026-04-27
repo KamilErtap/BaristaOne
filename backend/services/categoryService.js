@@ -1,12 +1,13 @@
 const Category = require('../models/Category');
+const { SORT_OPTIONS } = require('../constants/sortOptions');
 
 const buildCategorySort = (sort) => {
   let sortOption = { createdAt: -1 };
 
-  if (sort === 'name_asc') sortOption = { name: 1 };
-  if (sort === 'name_desc') sortOption = { name: -1 };
-  if (sort === 'newest') sortOption = { createdAt: -1 };
-  if (sort === 'oldest') sortOption = { createdAt: 1 };
+  if (sort === SORT_OPTIONS.NAME_ASC) sortOption = { name: 1 };
+  if (sort === SORT_OPTIONS.NAME_DESC) sortOption = { name: -1 };
+  if (sort === SORT_OPTIONS.NEWEST) sortOption = { createdAt: -1 };
+  if (sort === SORT_OPTIONS.OLDEST) sortOption = { createdAt: 1 };
 
   return sortOption;
 };

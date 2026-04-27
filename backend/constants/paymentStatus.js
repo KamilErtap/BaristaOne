@@ -1,0 +1,16 @@
+const PAYMENT_STATUS = {
+  PENDING: 'pending',
+  PAID: 'paid',
+  FAILED: 'failed',
+};
+
+const PAYMENT_STATUS_LIST = [
+  PAYMENT_STATUS.PENDING,
+  PAYMENT_STATUS.PAID,
+  PAYMENT_STATUS.FAILED,
+];
+
+module.exports = {
+  PAYMENT_STATUS,
+  PAYMENT_STATUS_LIST,
+};

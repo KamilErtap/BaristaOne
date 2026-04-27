@@ -1,14 +1,15 @@
 const Table = require('../models/Table');
+const { SORT_OPTIONS } = require('../constants/sortOptions');
 
 const buildTableSort = (sort) => {
   let sortOption = { number: 1 };
 
-  if (sort === 'number_asc') sortOption = { number: 1 };
-  if (sort === 'number_desc') sortOption = { number: -1 };
-  if (sort === 'capacity_asc') sortOption = { capacity: 1 };
-  if (sort === 'capacity_desc') sortOption = { capacity: -1 };
-  if (sort === 'newest') sortOption = { createdAt: -1 };
-  if (sort === 'oldest') sortOption = { createdAt: 1 };
+  if (sort === SORT_OPTIONS.NUMBER_ASC) sortOption = { number: 1 };
+  if (sort === SORT_OPTIONS.NUMBER_DESC) sortOption = { number: -1 };
+  if (sort === SORT_OPTIONS.CAPACITY_ASC) sortOption = { capacity: 1 };
+  if (sort === SORT_OPTIONS.CAPACITY_DESC) sortOption = { capacity: -1 };
+  if (sort === SORT_OPTIONS.NEWEST) sortOption = { createdAt: -1 };
+  if (sort === SORT_OPTIONS.OLDEST) sortOption = { createdAt: 1 };
 
   return sortOption;
 };
@@ -49,6 +50,7 @@ const getAllTablesService = async (query = {}) => {
 
 const createTableService = async ({ number, code, capacity, isActive, description }) => {
   const existingNumber = await Table.findOne({ number });
+
   if (existingNumber) {
     const error = new Error('Bu masa numarası zaten mevcut');
     error.statusCode = 400;
@@ -82,6 +84,7 @@ const updateTableService = async (id, payload) => {
     Number(payload.number) !== table.number
   ) {
     const existingNumber = await Table.findOne({ number: Number(payload.number) });
+
     if (existingNumber) {
       const error = new Error('Bu masa numarası zaten mevcut');
       error.statusCode = 400;

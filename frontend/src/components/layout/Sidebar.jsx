@@ -56,6 +56,12 @@ const Sidebar = () => {
       icon: '🧾',
       roles: ['admin', 'owner'],
     },
+    {
+      label: 'Event Logs',
+      path: '/admin/event-logs',
+      icon: '📜',
+      roles: ['admin', 'owner'],
+    },
   ];
 
   const links = allLinks.filter((link) => link.roles.includes(role));

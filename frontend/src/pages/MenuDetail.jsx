@@ -5,6 +5,14 @@ import { getItem } from '../api/responseHelpers';
 import { orderApi } from '../api/orderApi';
 import { useAuth } from '../context/AuthContext';
 
+import PageHeader from '../components/common/PageHeader';
+import Card, { CardBody } from '../components/common/Card';
+import Button from '../components/common/Button';
+import Input from '../components/common/Input';
+import Loading from '../components/common/Loading';
+import EmptyState from '../components/common/EmptyState';
+import Badge from '../components/common/Badge';
+
 const MenuDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,16 +20,20 @@ const MenuDetail = () => {
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ordering, setOrdering] = useState(false);
+
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
   const [tableNumber, setTableNumber] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [message, setMessage] = useState('');
 
   const isCustomer = userInfo?.user?.role === 'customer';
 
   const fetchItem = async () => {
     try {
       setLoading(true);
+
       const response = await menuApi.getMenuItemById(id);
       setItem(getItem(response));
       setError('');
@@ -41,31 +53,32 @@ const MenuDetail = () => {
     setError('');
 
     if (!userInfo) {
-      setMessage('Sipariş vermek için giriş yapmalısınız.');
+      setError('Sipariş vermek için giriş yapmalısınız.');
       return;
     }
 
     if (!isCustomer) {
-      setMessage('Sadece müşteri hesabı sipariş verebilir.');
+      setError('Sadece müşteri hesabı sipariş verebilir.');
       return;
     }
 
-    if (!tableNumber) {
-      setMessage('Lütfen masa numarası girin.');
+    if (!item?.isAvailable) {
+      setError('Bu ürün şu anda siparişe kapalı.');
+      return;
+    }
+
+    if (!quantity || Number(quantity) < 1) {
+      setError('Lütfen geçerli bir adet girin.');
+      return;
+    }
+
+    if (!tableNumber || Number(tableNumber) < 1) {
+      setError('Lütfen geçerli bir masa numarası girin.');
       return;
     }
 
     try {
-      const payload = {
-        items: [
-          {
-            menuItem: item._id,
-            quantity: Number(quantity),
-          },
-        ],
-        tableNumber: Number(tableNumber),
-        paymentStatus: 'paid',
-      };
+      setOrdering(true);
 
       const response = await orderApi.createOrder({
         cart: [
@@ -81,22 +94,30 @@ const MenuDetail = () => {
       setTableNumber('');
       setQuantity(1);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Sipariş oluşturulamadı');
+      setError(err.response?.data?.message || 'Sipariş oluşturulamadı.');
+    } finally {
+      setOrdering(false);
     }
   };
 
   if (loading) {
-    return (
-      <div className="page-container">
-        <p>Ürün yükleniyor...</p>
-      </div>
-    );
+    return <Loading text="Ürün yükleniyor..." />;
   }
 
-  if (error) {
+  if (error && !item) {
     return (
       <div className="page-container">
-        <p className="message error">{error}</p>
+        <PageHeader
+          title="Ürün Detayı"
+          subtitle="Ürün bilgisi alınırken bir hata oluştu."
+          actions={
+            <Button variant="secondary" onClick={() => navigate('/menu')}>
+              Menüye Dön
+            </Button>
+          }
+        />
+
+        <EmptyState title="Ürün bulunamadı" description={error} />
       </div>
     );
   }
@@ -105,12 +126,18 @@ const MenuDetail = () => {
 
   return (
     <div className="page-container">
-      <button className="btn-secondary" onClick={() => navigate(-1)} style={{ marginBottom: '16px' }}>
-        Geri Dön
-      </button>
+      <PageHeader
+        title={item.name}
+        subtitle="Ürün detayını incele ve istersen doğrudan sipariş oluştur."
+        actions={
+          <Button variant="secondary" onClick={() => navigate(-1)}>
+            Geri Dön
+          </Button>
+        }
+      />
 
       <div className="panel-grid">
-        <div className="card" style={{ overflow: 'hidden' }}>
+        <Card style={{ overflow: 'hidden' }}>
           {item.image ? (
             <img
               src={item.image}
@@ -121,28 +148,34 @@ const MenuDetail = () => {
             <div style={styles.placeholder}>Görsel Yok</div>
           )}
 
-          <div className="card-body">
-            <div className="row-wrap" style={{ marginBottom: '12px' }}>
-              <span className="badge">{item.category}</span>
-              <span className="badge">{item.isAvailable ? 'Müsait' : 'Tükendi'}</span>
+          <CardBody>
+            <div style={styles.badgeRow}>
+              <Badge>{item.category}</Badge>
+              <Badge variant={item.isAvailable ? 'success' : 'danger'}>
+                {item.isAvailable ? 'Müsait' : 'Tükendi'}
+              </Badge>
             </div>
 
-            <h1 className="page-title" style={{ marginBottom: '12px' }}>{item.name}</h1>
-            <p className="page-subtitle">{item.description}</p>
+            <h2 style={styles.title}>{item.name}</h2>
 
-            <p style={styles.price}>{item.price} TL</p>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-body">
-            <h2 style={{ marginBottom: '12px' }}>Sipariş Ver</h2>
-            <p className="page-subtitle" style={{ marginBottom: '16px' }}>
-              Bu ürünü doğrudan sipariş oluşturmak için kullanabilirsin.
+            <p style={styles.description}>
+              {item.description || 'Bu ürün için açıklama bulunmuyor.'}
             </p>
 
-            <div className="form-stack">
-              <input
+            <p style={styles.price}>{item.price} TL</p>
+          </CardBody>
+        </Card>
+
+        <Card style={styles.orderCard}>
+          <CardBody>
+            <h2 style={{ marginBottom: '12px' }}>Sipariş Ver</h2>
+            <p style={styles.muted}>
+              Bu ürünü tek başına hızlıca sipariş oluşturmak için kullanabilirsin.
+            </p>
+
+            <div className="form-stack" style={{ marginTop: '16px' }}>
+              <Input
+                label="Adet"
                 type="number"
                 min="1"
                 value={quantity}
@@ -150,26 +183,35 @@ const MenuDetail = () => {
                 placeholder="Adet"
               />
 
-              <input
+              <Input
+                label="Masa Numarası"
                 type="number"
                 min="1"
                 value={tableNumber}
                 onChange={(e) => setTableNumber(e.target.value)}
-                placeholder="Masa Numarası"
+                placeholder="Örn: 4"
               />
 
-              <button
-                className="btn-primary"
+              <Button
+                variant="primary"
                 onClick={handleOrder}
-                disabled={!item.isAvailable}
+                disabled={!item.isAvailable || ordering}
+                style={{ width: '100%' }}
               >
-                Sipariş Oluştur
-              </button>
+                {ordering ? 'Sipariş oluşturuluyor...' : 'Sipariş Oluştur'}
+              </Button>
             </div>
 
+            {!item.isAvailable && (
+              <p className="message error">
+                Bu ürün şu anda siparişe kapalı.
+              </p>
+            )}
+
             {message && <p className="message success">{message}</p>}
-          </div>
-        </div>
+            {error && <p className="message error">{error}</p>}
+          </CardBody>
+        </Card>
       </div>
     </div>
   );
@@ -191,11 +233,33 @@ const styles = {
     color: '#64748b',
     fontWeight: 700,
   },
+  badgeRow: {
+    display: 'flex',
+    gap: '10px',
+    flexWrap: 'wrap',
+    marginBottom: '14px',
+  },
+  title: {
+    fontSize: '28px',
+    marginBottom: '10px',
+  },
+  description: {
+    color: '#64748b',
+    lineHeight: 1.6,
+  },
   price: {
     fontSize: '28px',
     fontWeight: 800,
     color: '#8b5e3c',
     marginTop: '18px',
+  },
+  orderCard: {
+    height: 'fit-content',
+    position: 'sticky',
+    top: '96px',
+  },
+  muted: {
+    color: '#64748b',
   },
 };
 

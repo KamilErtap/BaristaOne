@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { ORDER_STATUS, ORDER_STATUS_LIST } = require('../constants/orderStatus');
+const { PAYMENT_STATUS, PAYMENT_STATUS_LIST } = require('../constants/paymentStatus');
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -55,13 +57,13 @@ const orderSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ['pending', 'paid'],
-      default: 'pending',
+      enum: PAYMENT_STATUS_LIST,
+      default: PAYMENT_STATUS.PENDING,
     },
     orderStatus: {
       type: String,
-      enum: ['received', 'preparing', 'ready', 'delivered'],
-      default: 'received',
+      enum: ORDER_STATUS_LIST,
+      default: ORDER_STATUS.RECEIVED,
     },
   },
   { timestamps: true }

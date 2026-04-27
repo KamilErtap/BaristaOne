@@ -1,4 +1,6 @@
 const { body } = require('express-validator');
+const { ORDER_STATUS_LIST } = require('../constants/orderStatus');
+const { PAYMENT_STATUS_LIST } = require('../constants/paymentStatus');
 
 const createOrderValidator = [
   body('items')
@@ -24,7 +26,7 @@ const createOrderValidator = [
   body('paymentStatus')
     .notEmpty()
     .withMessage('Ödeme durumu zorunludur')
-    .isIn(['pending', 'paid'])
+    .isIn(PAYMENT_STATUS_LIST)
     .withMessage('Geçersiz ödeme durumu'),
 ];
 
@@ -32,7 +34,7 @@ const updateOrderStatusValidator = [
   body('orderStatus')
     .notEmpty()
     .withMessage('Sipariş durumu zorunludur')
-    .isIn(['received', 'preparing', 'ready', 'delivered'])
+    .isIn(ORDER_STATUS_LIST)
     .withMessage('Geçersiz sipariş durumu'),
 ];
 
