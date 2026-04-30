@@ -1,0 +1,41 @@
+name: BaristaOne Docker Build
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  docker-build:
+    name: Docker build check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Docker versions
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Validate development compose file
+        run: docker compose -f docker-compose.yml config
+
+      - name: Validate production compose file
+        run: docker compose -f docker-compose.prod.yml config
+
+      - name: Build backend development image
+        run: docker build -f backend/Dockerfile -t baristaone-backend:ci ./backend
+
+      - name: Build backend production image
+        run: docker build -f backend/Dockerfile.prod -t baristaone-backend-prod:ci ./backend
+
+      - name: Build frontend development image
+        run: docker build -f frontend/Dockerfile -t baristaone-frontend:ci ./frontend
+
+      - name: Build frontend production image
+        run: docker build -f frontend/Dockerfile.prod -t baristaone-frontend-prod:ci ./frontend
