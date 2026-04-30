@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   environment {
-    BACKEND_HEALTH_URL = 'http://localhost:5000/api/health'
-    FRONTEND_URL = 'http://localhost:5173'
+    BACKEND_HEALTH_URL = 'http://baristaone-backend:5000/api/health'
+    FRONTEND_URL = 'http://baristaone-frontend:5173'
   }
 
   stages {
@@ -54,24 +54,24 @@ pipeline {
     stage('Wait For Services') {
       steps {
         echo 'Servislerin ayağa kalkması bekleniyor...'
-        sh 'sleep 25'
+        sh 'sleep 45'
       }
     }
 
     stage('Backend Health Check') {
       steps {
-        echo 'Backend health endpoint kontrol ediliyor...'
+        echo 'Backend health endpoint container içinde kontrol ediliyor...'
         sh '''
-          curl -f $BACKEND_HEALTH_URL
+          docker exec baristaone-backend node -e "fetch('http://localhost:5000/api/health').then(async r => { console.log(await r.text()); if (!r.ok) process.exit(1); }).catch(e => { console.error(e.message); process.exit(1); })"
         '''
       }
     }
 
     stage('Frontend Check') {
       steps {
-        echo 'Frontend erişim kontrolü yapılıyor...'
+        echo 'Frontend erişim kontrolü container içinde yapılıyor...'
         sh '''
-          curl -I -f $FRONTEND_URL
+          docker exec baristaone-frontend node -e "fetch('http://localhost:5173').then(async r => { console.log('Frontend status:', r.status); if (!r.ok) process.exit(1); }).catch(e => { console.error(e.message); process.exit(1); })"
         '''
       }
     }
