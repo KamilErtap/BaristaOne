@@ -22,6 +22,14 @@ pipeline {
       }
     }
 
+        stage('Clean Previous Docker Compose Run') {
+      steps {
+        echo 'Önceki Docker Compose containerları temizleniyor...'
+        sh 'docker compose -f docker-compose.yml down --remove-orphans || true'
+        sh 'docker rm -f baristaone-backend baristaone-frontend baristaone-worker baristaone-redis baristaone-rabbitmq || true'
+      }
+    }
+
     stage('Compose Config Validate') {
       steps {
         echo 'docker-compose.yml doğrulanıyor...'
