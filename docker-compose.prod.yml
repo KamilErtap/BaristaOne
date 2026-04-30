@@ -11,6 +11,8 @@ services:
     environment:
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://rabbitmq:5672
+      CACHE_ENABLED: "true"
+      RABBITMQ_ENABLED: "true"
     depends_on:
       - redis
       - rabbitmq
@@ -27,6 +29,8 @@ services:
     environment:
       REDIS_URL: redis://redis:6379
       RABBITMQ_URL: amqp://rabbitmq:5672
+      CACHE_ENABLED: "true"
+      RABBITMQ_ENABLED: "true"
     depends_on:
       - rabbitmq
     restart: unless-stopped

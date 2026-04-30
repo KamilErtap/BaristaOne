@@ -1,8 +1,14 @@
+const env = require('../config/env');
 const { getRabbitChannel } = require('../config/rabbitmq');
 const logger = require('./logger');
 
+const isRabbitPublishEnabled = () => {
+  return env.rabbitmqEnabled && process.env.NODE_ENV !== 'test';
+};
+
 const publishToQueue = async (queueName, payload) => {
-  if (process.env.NODE_ENV === 'test') {
+  if (!isRabbitPublishEnabled()) {
+    logger.info(`RabbitMQ publish devre dışı (${queueName})`);
     return false;
   }
 

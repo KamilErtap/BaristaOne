@@ -84,14 +84,12 @@ const createOrderService = async ({ items, tableNumber, paymentStatus, customerI
     orderStatus: ORDER_STATUS.RECEIVED,
   });
 
-  if (process.env.NODE_ENV !== 'test') {
-    await publishToQueue(QUEUES.ORDER_CREATED, {
-      orderId: order._id,
-      tableNumber: order.tableNumber,
-      customerId,
-      totalPrice: order.totalPrice,
-    });
-  }
+  await publishToQueue(QUEUES.ORDER_CREATED, {
+    orderId: order._id,
+    tableNumber: order.tableNumber,
+    customerId,
+    totalPrice: order.totalPrice,
+  });
 
   const populatedOrder = await populateOrderQuery(Order.findById(order._id));
   return populatedOrder;

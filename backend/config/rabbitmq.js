@@ -9,6 +9,10 @@ let connectingPromise = null;
 const MAX_RETRIES = 5;
 const BASE_RETRY_DELAY_MS = 1000;
 
+const isRabbitEnabled = () => {
+  return env.rabbitmqEnabled && process.env.NODE_ENV !== 'test';
+};
+
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -36,7 +40,8 @@ const attachConnectionListeners = (rabbitConnection) => {
 };
 
 const createRabbitConnection = async () => {
-  if (process.env.NODE_ENV === 'test') {
+  if (!isRabbitEnabled()) {
+    logger.info('RabbitMQ devre dışı');
     return null;
   }
 
@@ -70,11 +75,12 @@ const createRabbitConnection = async () => {
     }
   }
 
-  throw lastError;
+  logger.error(`RabbitMQ bağlantısı kurulamadı: ${lastError?.message}`);
+  return null;
 };
 
 const getRabbitChannel = async () => {
-  if (process.env.NODE_ENV === 'test') {
+  if (!isRabbitEnabled()) {
     return null;
   }
 
@@ -86,7 +92,8 @@ const getRabbitChannel = async () => {
     connectingPromise = createRabbitConnection()
       .catch((error) => {
         resetRabbitState();
-        throw error;
+        logger.error(`RabbitMQ beklenmeyen bağlantı hatası: ${error.message}`);
+        return null;
       })
       .finally(() => {
         connectingPromise = null;

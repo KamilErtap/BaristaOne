@@ -1,8 +1,14 @@
+const env = require('../config/env');
 const { getRabbitChannel } = require('../config/rabbitmq');
 const logger = require('./logger');
 
+const isRabbitConsumerEnabled = () => {
+  return env.rabbitmqEnabled && process.env.NODE_ENV !== 'test';
+};
+
 const consumeQueue = async (queueName, handler) => {
-  if (process.env.NODE_ENV === 'test') {
+  if (!isRabbitConsumerEnabled()) {
+    logger.info(`RabbitMQ consumer devre dışı (${queueName})`);
     return false;
   }
 
@@ -47,3 +53,4 @@ const consumeQueue = async (queueName, handler) => {
 };
 
 module.exports = consumeQueue;
+module.exports.consumeQueue = consumeQueue;

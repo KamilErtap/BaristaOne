@@ -14,6 +14,7 @@ const env = {
   adminPassword: process.env.ADMIN_PASSWORD || '',
 
   cacheEnabled: process.env.CACHE_ENABLED === 'true',
+  rabbitmqEnabled: process.env.RABBITMQ_ENABLED === 'true',
 };
 
 module.exports = env;

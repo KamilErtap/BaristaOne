@@ -22,23 +22,39 @@ const handleOrderCreated = async (payload) => {
 
 const startWorker = async () => {
   try {
+    if (!env.rabbitmqEnabled) {
+      logger.info('Order created worker devre dışı: RABBITMQ_ENABLED=false');
+      process.exit(0);
+    }
+
     await connectDB();
 
-    await consumeQueue(QUEUES.ORDER_CREATED, handleOrderCreated);
+    const isConsuming = await consumeQueue(
+      QUEUES.ORDER_CREATED,
+      handleOrderCreated
+    );
+
+    if (!isConsuming) {
+      logger.error('Order created worker kuyruğu dinlemeye başlayamadı');
+      process.exit(1);
+    }
   } catch (error) {
     logger.error(`Order created worker başlatılamadı: ${error.message}`);
     process.exit(1);
   }
 };
 
-process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  process.exit(0);
-});
+const shutdown = async () => {
+  try {
+    await mongoose.connection.close();
+  } catch (error) {
+    logger.error(`Worker kapanırken MongoDB hatası: ${error.message}`);
+  } finally {
+    process.exit(0);
+  }
+};
 
-process.on('SIGTERM', async () => {
-  await mongoose.connection.close();
-  process.exit(0);
-});
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
 
 startWorker();

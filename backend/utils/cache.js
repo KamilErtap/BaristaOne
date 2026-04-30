@@ -1,4 +1,4 @@
-const redisClient = require('../config/redis');
+const { getRedisClient } = require('../config/redis');
 const env = require('../config/env');
 const logger = require('./logger');
 
@@ -6,13 +6,26 @@ const isCacheEnabled = () => {
   return env.cacheEnabled && process.env.NODE_ENV !== 'test';
 };
 
+const getActiveRedisClient = () => {
+  if (!isCacheEnabled()) {
+    return null;
+  }
+
+  const client = getRedisClient();
+
+  if (!client || !client.isOpen) {
+    return null;
+  }
+
+  return client;
+};
+
 const getCache = async (key) => {
-  if (!isCacheEnabled()) return null;
+  const client = getActiveRedisClient();
+  if (!client) return null;
 
   try {
-    if (!redisClient.isOpen) return null;
-
-    const cachedData = await redisClient.get(key);
+    const cachedData = await client.get(key);
     return cachedData ? JSON.parse(cachedData) : null;
   } catch (error) {
     logger.error(`Cache okuma hatası (${key}): ${error.message}`);
@@ -21,12 +34,11 @@ const getCache = async (key) => {
 };
 
 const setCache = async (key, value, ttl = 60) => {
-  if (!isCacheEnabled()) return false;
+  const client = getActiveRedisClient();
+  if (!client) return false;
 
   try {
-    if (!redisClient.isOpen) return false;
-
-    await redisClient.set(key, JSON.stringify(value), {
+    await client.set(key, JSON.stringify(value), {
       EX: ttl,
     });
 
@@ -38,12 +50,11 @@ const setCache = async (key, value, ttl = 60) => {
 };
 
 const deleteCache = async (key) => {
-  if (!isCacheEnabled()) return false;
+  const client = getActiveRedisClient();
+  if (!client) return false;
 
   try {
-    if (!redisClient.isOpen) return false;
-
-    await redisClient.del(key);
+    await client.del(key);
     return true;
   } catch (error) {
     logger.error(`Cache silme hatası (${key}): ${error.message}`);
@@ -52,25 +63,24 @@ const deleteCache = async (key) => {
 };
 
 const deleteCacheByPattern = async (pattern) => {
-  if (!isCacheEnabled()) return false;
+  const client = getActiveRedisClient();
+  if (!client) return false;
 
   try {
-    if (!redisClient.isOpen) return false;
-
-    let cursor = '0';
+    let cursor = 0;
 
     do {
-      const result = await redisClient.scan(cursor, {
+      const result = await client.scan(cursor, {
         MATCH: pattern,
         COUNT: 100,
       });
 
-      cursor = result.cursor;
+      cursor = Number(result.cursor);
 
       if (result.keys.length > 0) {
-        await redisClient.del(result.keys);
+        await client.del(result.keys);
       }
-    } while (cursor !== '0');
+    } while (cursor !== 0);
 
     return true;
   } catch (error) {

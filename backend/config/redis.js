@@ -2,29 +2,86 @@ const { createClient } = require('redis');
 const env = require('./env');
 const logger = require('../utils/logger');
 
-const redisClient = createClient({
-  url: env.redisUrl,
-});
+let redisClient = null;
 
-redisClient.on('error', (error) => {
-  logger.error(`Redis bağlantı hatası: ${error.message}`);
-});
+const isRedisEnabled = () => {
+  return env.cacheEnabled && env.redisUrl;
+};
 
-redisClient.on('connect', () => {
-  logger.info('Redis bağlantısı kuruluyor');
-});
+const getRedisClient = () => {
+  if (!isRedisEnabled()) {
+    return null;
+  }
 
-redisClient.on('ready', () => {
-  logger.info('Redis hazır');
-});
+  if (redisClient) {
+    return redisClient;
+  }
+
+  redisClient = createClient({
+    url: env.redisUrl,
+  });
+
+  redisClient.on('error', (error) => {
+    logger.error(`Redis bağlantı hatası: ${error.message}`);
+  });
+
+  redisClient.on('connect', () => {
+    logger.info('Redis bağlantısı kuruluyor');
+  });
+
+  redisClient.on('ready', () => {
+    logger.info('Redis hazır');
+  });
+
+  redisClient.on('end', () => {
+    logger.error('Redis bağlantısı kapandı');
+  });
+
+  return redisClient;
+};
 
 const connectRedis = async () => {
-  if (!redisClient.isOpen) {
-    await redisClient.connect();
+  if (!isRedisEnabled()) {
+    logger.info('Redis cache devre dışı');
+    return null;
+  }
+
+  const client = getRedisClient();
+
+  if (!client) {
+    return null;
+  }
+
+  try {
+    if (!client.isOpen) {
+      await client.connect();
+    }
+
+    return client;
+  } catch (error) {
+    logger.error(`Redis bağlantısı kurulamadı: ${error.message}`);
+    return null;
+  }
+};
+
+const closeRedis = async () => {
+  if (!redisClient) {
+    return;
+  }
+
+  try {
+    if (redisClient.isOpen) {
+      await redisClient.quit();
+    }
+  } catch (error) {
+    logger.error(`Redis bağlantısı kapatılırken hata: ${error.message}`);
+  } finally {
+    redisClient = null;
   }
 };
 
 module.exports = {
-  redisClient,
+  getRedisClient,
   connectRedis,
+  closeRedis,
 };
