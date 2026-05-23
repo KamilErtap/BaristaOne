@@ -6,12 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#f8fafc"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kamilertap.baristaone",
@@ -25,18 +19,21 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f8fafc"
       },
-      "permissions": [
-        "CAMERA"
-      ]
+      "permissions": ["CAMERA"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "7affb841-e1ea-4fa9-b78b-d2d21391f80f"
-      }
-    },
-    "owner": "kamil32500"
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "backgroundColor": "#f8fafc",
+          "resizeMode": "contain",
+          "imageWidth": 200
+        }
+      ]
+    ]
   }
 }
