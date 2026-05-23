@@ -28,3 +28,21 @@ export const getItem = (response) => {
     null
   );
 };
+
+export const getOrders = (response) => {
+  return (
+    response?.data?.data?.orders ||
+    response?.data?.orders ||
+    response?.data?.data ||
+    []
+  );
+};
+
+export const getTable = (response) => {
+  return (
+    response?.data?.data?.table ||
+    response?.data?.table ||
+    response?.data?.data ||
+    null
+  );
+};

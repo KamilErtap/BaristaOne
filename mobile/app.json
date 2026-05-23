@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "BaristaOne",
+    "slug": "baristaone-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,20 +10,33 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#f8fafc"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kamilertap.baristaone",
+      "infoPlist": {
+        "NSCameraUsageDescription": "BaristaOne masa QR kodlarını okutmak için kamerayı kullanır."
+      }
     },
     "android": {
+      "package": "com.kamilertap.baristaone",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#f8fafc"
       },
-      "edgeToEdgeEnabled": true
+      "permissions": [
+        "CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7affb841-e1ea-4fa9-b78b-d2d21391f80f"
+      }
+    },
+    "owner": "kamil32500"
   }
 }

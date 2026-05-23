@@ -1,10 +1,9 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = 'https://barista-one-api.vercel.app/api';
+import env from '../config/env';
 
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: env.apiUrl,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,5 +22,16 @@ apiClient.interceptors.request.use(async (config) => {
 
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      await AsyncStorage.removeItem('userInfo');
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default apiClient;

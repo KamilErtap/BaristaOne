@@ -8,6 +8,7 @@ export default function AppInput({
   secureTextEntry = false,
   keyboardType = 'default',
   autoCapitalize = 'none',
+  editable = true,
 }) {
   return (
     <View style={styles.wrapper}>
@@ -20,7 +21,8 @@ export default function AppInput({
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
-        style={styles.input}
+        editable={editable}
+        style={[styles.input, !editable && styles.disabledInput]}
         placeholderTextColor="#94a3b8"
       />
     </View>
@@ -45,5 +47,9 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 15,
     color: '#1f2937',
+  },
+  disabledInput: {
+    backgroundColor: '#f1f5f9',
+    color: '#64748b',
   },
 });

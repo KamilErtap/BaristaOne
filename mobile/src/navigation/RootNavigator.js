@@ -3,6 +3,9 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import AuthNavigator from './AuthNavigator';
 import CustomerTabs from './CustomerTabs';
+import StaffTabs from './StaffTabs';
+
+const CUSTOMER_ROLE = 'customer';
 
 export default function RootNavigator() {
   const { userInfo, loading } = useAuth();
@@ -16,9 +19,18 @@ export default function RootNavigator() {
     );
   }
 
+  const role = userInfo?.user?.role;
+  const isCustomer = role === CUSTOMER_ROLE;
+
   return (
     <NavigationContainer>
-      {userInfo ? <CustomerTabs /> : <AuthNavigator />}
+      {!userInfo ? (
+        <AuthNavigator />
+      ) : isCustomer ? (
+        <CustomerTabs />
+      ) : (
+        <StaffTabs />
+      )}
     </NavigationContainer>
   );
 }
