@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import MenuStack from './MenuStack';
 import CartScreen from '../screens/CartScreen';
@@ -36,6 +37,7 @@ const getTabIcon = (routeName, focused) => {
 
 export default function CustomerTabs() {
   const { totalItems, selectedTable } = useCart();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -46,8 +48,8 @@ export default function CustomerTabs() {
         tabBarStyle: {
           backgroundColor: '#fff',
           borderTopColor: '#e2e8f0',
-          height: 66,
-          paddingBottom: 8,
+          height: 66 + insets.bottom,
+          paddingBottom: Math.max(insets.bottom, 10),
           paddingTop: 8,
         },
         tabBarLabelStyle: {

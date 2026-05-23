@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import KitchenScreen from '../screens/KitchenScreen';
 import WaiterScreen from '../screens/WaiterScreen';
@@ -31,6 +32,8 @@ export default function StaffTabs() {
   const canSeeKitchen = ['admin', 'owner', 'kitchen'].includes(role);
   const canSeeWaiter = ['admin', 'owner', 'waiter'].includes(role);
 
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -40,8 +43,8 @@ export default function StaffTabs() {
         tabBarStyle: {
           backgroundColor: '#fff',
           borderTopColor: '#e2e8f0',
-          height: 66,
-          paddingBottom: 8,
+          height: 66 + insets.bottom,
+          paddingBottom: Math.max(insets.bottom, 10),
           paddingTop: 8,
         },
         tabBarLabelStyle: {
