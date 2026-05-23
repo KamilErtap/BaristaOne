@@ -19,21 +19,17 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f8fafc"
       },
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/splash-icon.png",
-          "backgroundColor": "#f8fafc",
-          "resizeMode": "contain",
-          "imageWidth": 200
-        }
-      ]
-    ]
+    "extra": {
+      "eas": {
+        "projectId": "7affb841-e1ea-4fa9-b78b-d2d21391f80f"
+      }
+    }
   }
 }
