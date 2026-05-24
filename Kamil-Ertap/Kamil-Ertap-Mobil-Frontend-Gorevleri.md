@@ -1,115 +1,507 @@
 # Kamil Ertap'ın Mobil Frontend Görevleri
 
-## 1. Üye Olma (Kayıt) Ekranı
-- **API Endpoint:** `POST /auth/register`
-- **Görev:** Kullanıcı kayıt işlemi için mobil ekran tasarımı ve implementasyonu
-- **UI Bileşenleri:**
-  - Email input alanı (keyboard type: email)
-  - Şifre input alanı (secure text entry, şifre gücü göstergesi)
-  - Şifre tekrar input alanı (doğrulama için)
-  - Ad (firstName) input alanı
-  - Soyad (lastName) input alanı
-  - "Kayıt Ol" butonu
-  - "Zaten hesabınız var mı? Giriş Yap" linki
-  - Loading indicator (kayıt işlemi sırasında)
-- **Form Validasyonu:**
-  - Email format kontrolü (real-time validation)
-  - Şifre güvenlik kuralları (min 8 karakter, büyük/küçük harf, rakam)
-  - Şifre eşleşme kontrolü
-  - Ad ve soyad boş olamaz kontrolü
-  - Tüm alanlar doldurulmadan buton disabled
-- **Kullanıcı Deneyimi:**
-  - Form hatalarını alan altında gösterilmesi
-  - Başarılı kayıt sonrası success mesajı ve otomatik giriş ekranına yönlendirme
-  - Hata durumlarında kullanıcı dostu mesajlar (409 Conflict: "Bu email zaten kullanılıyor")
-  - Keyboard dismiss işlevi
-  - ScrollView kullanımı (klavye açıldığında içerik kaybolmasın)
-- **Teknik Detaylar:**
-  - Platform: Android (Jetpack Compose/XML) veya iOS (SwiftUI/UIKit)
-  - State management (form state, loading state, error state)
-  - Navigation (kayıt ekranından giriş ekranına geçiş)
-  - Accessibility desteği (content descriptions, labels)
+**Mobile Front-end Demo Videosu:** [Link buraya eklenecek](https://example.com)
 
-## 2. Kullanıcı Profil Görüntüleme Ekranı
-- **API Endpoint:** `GET /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini görüntüleme ekranı tasarımı ve implementasyonu
-- **UI Bileşenleri:**
-  - Profil fotoğrafı alanı (placeholder veya gerçek fotoğraf)
-  - Kullanıcı adı ve soyadı (büyük başlık)
-  - Email adresi (ikonlu)
-  - Telefon numarası (ikonlu, varsa)
-  - Hesap oluşturulma tarihi
-  - "Profili Düzenle" butonu
-  - "Hesabı Sil" butonu (kırmızı, alt kısımda)
-  - Pull-to-refresh özelliği
-- **Kullanıcı Deneyimi:**
-  - Loading skeleton screen (veri yüklenirken)
-  - Empty state (veri yoksa)
-  - Error state (yükleme hatası durumunda retry butonu)
-  - Smooth scroll animasyonları
-  - Profil fotoğrafı için placeholder avatar
-- **Teknik Detaylar:**
-  - Lazy loading (büyük profil fotoğrafları için)
-  - Image caching
-  - State management (user data, loading, error states)
-  - Navigation (profil düzenleme ekranına geçiş)
-  - Deep linking desteği (profil paylaşımı için)
+Bu dokümanda BaristaOne mobil uygulaması için geliştirilen müşteri ve personel ekranları açıklanmaktadır. Mobil uygulama React Native ve Expo ile geliştirilmiştir.
 
-## 3. Kullanıcı Profil Düzenleme Ekranı
-- **API Endpoint:** `PUT /users/{userId}`
-- **Görev:** Kullanıcı profil bilgilerini düzenleme ekranı tasarımı ve implementasyonu
-- **UI Bileşenleri:**
-  - Profil fotoğrafı düzenleme (seçme/değiştirme butonu)
-  - Ad (firstName) input alanı (mevcut değerle dolu)
-  - Soyad (lastName) input alanı (mevcut değerle dolu)
-  - Email input alanı (mevcut değerle dolu, düzenlenebilir)
-  - Telefon numarası input alanı (mevcut değerle dolu, format maskesi)
-  - "Kaydet" butonu (sağ üst köşe veya alt kısımda)
-  - "İptal" butonu (sol üst köşe)
-  - Değişiklik yapıldığında "Kaydet" butonu aktif olur
-- **Form Validasyonu:**
-  - Email format kontrolü
-  - Telefon numarası format kontrolü (ülke kodu desteği)
-  - Real-time validation feedback
-  - Değişiklik yoksa "Kaydet" butonu disabled
-- **Kullanıcı Deneyimi:**
-  - Optimistic update (kaydet butonuna basıldığında UI anında güncellenir)
-  - Başarılı güncelleme sonrası success snackbar/toast
-  - Hata durumunda error mesajı ve değişiklikler geri alınır
-  - "İptal" butonuna basıldığında değişiklik kaybı için onay dialog'u
-  - Keyboard dismiss işlevi
-- **Teknik Detaylar:**
-  - Form state management (initial values, edited values)
-  - Image picker entegrasyonu (galeri/kamera)
-  - Image compression (upload için)
-  - Navigation (geri dönüş, kaydetme sonrası profil ekranına dönüş)
-  - Unsaved changes warning
+---
 
-## 4. Hesap Silme Akışı
-- **API Endpoint:** `DELETE /users/{userId}`
-- **Görev:** Kullanıcı hesabını silme işlemi için UI akışı tasarımı ve implementasyonu
-- **UI Bileşenleri:**
-  - "Hesabı Sil" butonu (profil ekranında, kırmızı renkli)
-  - Onay dialog'u (destructive action için)
-  - Şifre doğrulama ekranı (güvenlik için opsiyonel)
-  - Son onay ekranı (uyarı mesajları ile)
-  - "Emin misiniz?" dialog'u (çift onay mekanizması)
-- **Kullanıcı Deneyimi:**
-  - Destructive action için görsel uyarılar (kırmızı renk, ikonlar)
-  - Açık ve net uyarı mesajları ("Bu işlem geri alınamaz")
-  - İptal seçeneği her zaman mevcut
-  - Silme işlemi sırasında loading indicator
-  - Başarılı silme sonrası logout ve login ekranına yönlendirme
-- **Akış Adımları:**
-  1. Profil ekranında "Hesabı Sil" butonuna tıklama
-  2. İlk uyarı dialog'u gösterilmesi
-  3. Onaylandığında şifre doğrulama (opsiyonel)
-  4. Son onay ekranı (detaylı uyarılar)
-  5. Silme işlemi gerçekleştirme
-  6. Başarılı silme sonrası logout ve login ekranına yönlendirme
-- **Teknik Detaylar:**
-  - Dialog/Modal component kullanımı
-  - Multi-step flow yönetimi
-  - Error handling (silme başarısız olursa)
-  - Logout işlemi entegrasyonu
-  - Navigation reset (login ekranına dönüş)
+## 1. Giriş Yapma Ekranı
+
+- **API Endpoint:** `POST /api/auth/login`
+- **Görev:** Kullanıcının email ve şifre bilgileriyle mobil uygulamaya giriş yapmasını sağlayan ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Email input alanı
+- Şifre input alanı
+- "Giriş Yap" butonu
+- "Hesabın yok mu? Kayıt ol" butonu
+- Loading indicator
+- Hata mesajı alanı
+- BaristaOne marka başlığı
+
+### Form Validasyonu
+
+- Email alanı boş bırakılamaz.
+- Şifre alanı boş bırakılamaz.
+- Eksik alan varsa kullanıcıya hata mesajı gösterilir.
+- API hatası durumunda kullanıcı dostu mesaj gösterilir.
+
+### Kullanıcı Deneyimi
+
+- Giriş işlemi sırasında loading durumu gösterilir.
+- Başarılı giriş sonrası kullanıcı rolüne göre ilgili mobil arayüze yönlendirilir.
+- Customer rolündeki kullanıcı müşteri ekranlarına yönlendirilir.
+- Kitchen, Waiter, Admin ve Owner rolleri personel ekranlarına yönlendirilir.
+- Token AsyncStorage üzerinde saklanır.
+- Uygulama tekrar açıldığında oturum korunur.
+
+### Teknik Detaylar
+
+- `AuthContext` kullanılmıştır.
+- `AsyncStorage` ile token saklama yapılmıştır.
+- Axios interceptor ile Authorization header otomatik eklenmiştir.
+- `authApi.login()` servisi kullanılmıştır.
+- React Navigation ile ekran geçişi yapılmıştır.
+
+---
+
+## 2. Kayıt Olma Ekranı
+
+- **API Endpoint:** `POST /api/auth/register`
+- **Görev:** Yeni müşteri hesabı oluşturmak için mobil kayıt ekranının tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Ad soyad input alanı
+- Email input alanı
+- Şifre input alanı
+- "Kayıt Ol" butonu
+- "Zaten hesabın var mı? Giriş yap" butonu
+- Loading indicator
+- Hata mesajı alanı
+
+### Form Validasyonu
+
+- Ad soyad alanı boş bırakılamaz.
+- Email alanı boş bırakılamaz.
+- Şifre alanı boş bırakılamaz.
+- Eksik alan varsa kullanıcıya hata mesajı gösterilir.
+- API hata mesajı kullanıcıya gösterilir.
+
+### Kullanıcı Deneyimi
+
+- Kayıt işlemi sırasında loading durumu gösterilir.
+- Başarılı kayıt sonrası kullanıcı otomatik olarak giriş yapmış kabul edilir.
+- Kullanıcı müşteri ana ekranına yönlendirilir.
+- Klavye açıldığında ekran içeriğinin kaybolmaması için KeyboardAvoidingView kullanılmıştır.
+
+### Teknik Detaylar
+
+- `authApi.register()` servisi kullanılmıştır.
+- `AuthContext` içindeki login fonksiyonu ile kayıt sonrası oturum açılmıştır.
+- Form state yönetimi `useState` ile yapılmıştır.
+- React Navigation ile Login ekranına dönüş sağlanmıştır.
+
+---
+
+## 3. Menü Listeleme Ekranı
+
+- **API Endpoint:** `GET /api/menu`
+- **Görev:** Kafe menüsündeki ürünleri mobil cihazda listeleyen ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Menü başlığı
+- Kullanıcı karşılama metni
+- Ürün kartları
+- Ürün görseli
+- Ürün adı
+- Ürün açıklaması
+- Ürün fiyatı
+- Kategori badge
+- Müsait / Tükendi badge
+- Pull-to-refresh
+- Empty state
+- Loading state
+
+### Kullanıcı Deneyimi
+
+- Menü yüklenirken loading ekranı gösterilir.
+- Ürün yoksa bilgilendirici boş durum mesajı gösterilir.
+- API hatası durumunda hata mesajı gösterilir.
+- Ürüne basıldığında ürün detay ekranına gidilir.
+- Liste pull-to-refresh ile yenilenebilir.
+
+### Teknik Detaylar
+
+- `menuApi.getMenuItems()` servisi kullanılmıştır.
+- API response verisi `getItems()` helper fonksiyonu ile ayrıştırılmıştır.
+- Ürün kartları Card bileşeni ile gösterilmiştir.
+- Navigation ile `MenuDetail` ekranına geçiş yapılmıştır.
+
+---
+
+## 4. Menü Arama, Kategori ve Sıralama Özellikleri
+
+- **API Endpoint:** `GET /api/menu`
+- **Görev:** Mobil menü ekranında ürün arama, kategori filtreleme ve sıralama özelliklerinin implementasyonu.
+
+### UI Bileşenleri
+
+- Ürün arama inputu
+- Kategori chipleri
+- Sıralama chipleri
+- "Filtreleri Temizle" butonu
+- Aktif filtre görünümü
+
+### Form / Filtre Validasyonu
+
+- Arama değeri boş olabilir.
+- Kategori seçimi opsiyoneldir.
+- Sıralama seçimi opsiyoneldir.
+- Filtreler temizlenince liste varsayılan hale döner.
+
+### Kullanıcı Deneyimi
+
+- Arama işlemi kısa gecikmeyle çalışır.
+- Kullanıcı her harfte agresif API isteği göndermeden ürün arayabilir.
+- Kategori chipleri yatay scroll ile gösterilir.
+- Sıralama seçenekleri mobil kullanıma uygun chip yapısıyla sunulur.
+
+### Teknik Detaylar
+
+- `filters` state yapısı kullanılmıştır.
+- `search`, `category`, `sort` parametreleri API’ye gönderilmiştir.
+- `getCategories()` helper fonksiyonu ile kategori verisi ayrıştırılmıştır.
+- `setTimeout` ile 350ms gecikmeli arama yapılmıştır.
+
+---
+
+## 5. Ürün Detay Ekranı
+
+- **API Endpoint:** `GET /api/menu/:id`
+- **Görev:** Seçilen ürünün detaylarını gösteren ve sepete ekleme işlemini sağlayan ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Ürün görseli
+- Ürün adı
+- Ürün açıklaması
+- Ürün fiyatı
+- Kategori badge
+- Müsait / Tükendi badge
+- Adet artırma butonu
+- Adet azaltma butonu
+- Ara toplam bilgisi
+- "Sepete Ekle" butonu
+- Geri dön butonu
+
+### Form Validasyonu
+
+- Adet değeri minimum 1 olabilir.
+- Ürün müsait değilse sepete ekleme engellenir.
+- Ürün bulunamazsa empty state gösterilir.
+
+### Kullanıcı Deneyimi
+
+- Ürün sepete eklendiğinde bilgilendirme mesajı gösterilir.
+- Sepete ekleme sonrası kullanıcı sepet ekranına yönlendirilir.
+- Tükendi durumundaki ürünler için buton disabled hale gelir.
+
+### Teknik Detaylar
+
+- `menuApi.getMenuItemById()` servisi kullanılmıştır.
+- `CartContext` içindeki `addToCart()` fonksiyonu kullanılmıştır.
+- Navigation params ile ürün id bilgisi taşınmıştır.
+
+---
+
+## 6. Sepet Ekranı
+
+- **Görev:** Kullanıcının sepete eklediği ürünleri görüntüleyip yönetebildiği ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Sepet başlığı
+- Sepetteki ürün kartları
+- Ürün görseli
+- Ürün adı
+- Ürün kategorisi
+- Ürün fiyatı
+- Adet artırma butonu
+- Adet azaltma butonu
+- Ürün silme butonu
+- Sepeti temizleme butonu
+- Toplam ürün sayısı
+- Toplam tutar
+- Checkout’a git butonu
+- Boş sepet empty state
+
+### Form Validasyonu
+
+- Ürün adedi 0 olduğunda ürün sepetten kaldırılır.
+- Sepet boşsa checkout yönlendirmesi yerine kullanıcı menüye yönlendirilir.
+
+### Kullanıcı Deneyimi
+
+- Sepet boşken kullanıcıya menüye gitme butonu sunulur.
+- Sepet tabında ürün sayısı badge olarak gösterilir.
+- Adet artırma ve azaltma işlemleri anında UI’a yansır.
+- Sepeti temizleme işlemi tek butonla yapılır.
+
+### Teknik Detaylar
+
+- `CartContext` oluşturulmuştur.
+- `addToCart`, `increaseQuantity`, `decreaseQuantity`, `removeFromCart`, `clearCart` fonksiyonları yazılmıştır.
+- `totalItems` ve `totalPrice` değerleri `useMemo` ile hesaplanmıştır.
+
+---
+
+## 7. Checkout / Ödeme Ekranı
+
+- **API Endpoint:** `POST /api/orders`
+- **Görev:** Sepetteki ürünleri masa numarasıyla birlikte siparişe dönüştüren ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Masa numarası input alanı
+- QR ile seçili masa bilgi kutusu
+- QR Masa’ya git butonu
+- Ödeme simülasyon bilgi kutusu
+- Sipariş özeti
+- Toplam ürün sayısı
+- Toplam tutar
+- "Siparişi Tamamla" butonu
+- Sepete dön butonu
+- Boş sepet empty state
+
+### Form Validasyonu
+
+- Sepet boşsa sipariş oluşturulamaz.
+- Masa numarası boşsa kullanıcıya uyarı gösterilir.
+- Masa QR ile seçilmişse input kilitlenir.
+- Masa seçimi temizlenirse manuel input tekrar açılır.
+
+### Kullanıcı Deneyimi
+
+- Sepet boşken kullanıcı menüye veya siparişlerim ekranına yönlendirilir.
+- QR ile masa seçilmemişse kullanıcıya QR Masa’ya git önerisi gösterilir.
+- Sipariş başarılı olunca sepet temizlenir.
+- Sipariş başarılı olunca kullanıcı Siparişlerim ekranına yönlendirilir.
+
+### Teknik Detaylar
+
+- `orderApi.createOrder()` servisi kullanılmıştır.
+- Mobil sepet verisi backend’in beklediği `items` formatına dönüştürülmüştür.
+- Payload içinde `paymentStatus: "paid"` gönderilerek ödeme simülasyonu yapılmıştır.
+- `CartContext` üzerinden sepet ve seçili masa bilgisi alınmıştır.
+
+---
+
+## 8. QR Masa Okutma Ekranı
+
+- **API Endpoint:** `GET /api/tables/code/:tableCode`
+- **Görev:** Masadaki QR kodu okutarak masa bilgisini otomatik seçen ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Kamera görüntüsü
+- QR okutma alanı
+- Kamera izni butonu
+- Tekrar tara butonu
+- Menüye git butonu
+- Seçili masa bilgi kartı
+- Masa seçimini temizleme butonu
+- Başarı ve hata mesajları
+
+### Validasyon
+
+- Kamera izni yoksa izin isteme ekranı gösterilir.
+- QR içinden masa kodu okunamazsa hata mesajı gösterilir.
+- Geçersiz masa kodu için kullanıcı dostu hata mesajı gösterilir.
+- QR direkt masa kodu veya web linki olarak okunabilir.
+
+### Kullanıcı Deneyimi
+
+- QR okutulunca masa bilgisi otomatik seçilir.
+- QR Masa tabında seçili masa için ✓ badge gösterilir.
+- Checkout ekranında masa numarası otomatik doldurulur.
+- QR ile seçilen masa manuel olarak değiştirilemez.
+- Kullanıcı isterse masa seçimini temizleyebilir.
+
+### Teknik Detaylar
+
+- `expo-camera` kullanılmıştır.
+- `CameraView` ile QR okutma yapılmıştır.
+- QR içeriğinden masa kodu ayrıştıran `extractTableCode()` fonksiyonu yazılmıştır.
+- `tableApi.getTableByCode()` servisi kullanılmıştır.
+- `CartContext` içinde `selectedTable`, `setSelectedTable`, `clearSelectedTable` state yapısı oluşturulmuştur.
+
+---
+
+## 9. Siparişlerim Ekranı
+
+- **API Endpoint:** `GET /api/orders/my-orders`
+- **Görev:** Müşterinin kendi siparişlerini görüntülediği ve sipariş durumunu takip ettiği ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Siparişlerim başlığı
+- Yenile butonu
+- Pull-to-refresh
+- Toplam / aktif / hazır / teslim istatistik kartları
+- Aktif siparişler listesi
+- Teslim edilen siparişler listesi
+- Sipariş kartı
+- Masa numarası
+- Sipariş numarası
+- Ürün listesi
+- Toplam tutar
+- Renkli sipariş durumu badge
+- Ödeme durumu badge
+- Boş sipariş empty state
+- Menüye git butonu
+
+### Kullanıcı Deneyimi
+
+- Siparişler aktif ve teslim edilenler olarak ayrılmıştır.
+- Duruma göre farklı renklerde badge gösterilmiştir.
+- Sipariş durumu açıklayıcı mesajlarla gösterilmiştir.
+- Pull-to-refresh ve Yenile butonu ile liste güncellenebilir.
+- Sipariş yoksa kullanıcı menüye yönlendirilir.
+
+### Teknik Detaylar
+
+- `orderApi.getMyOrders()` servisi kullanılmıştır.
+- `getOrders()` helper fonksiyonu ile API response ayrıştırılmıştır.
+- Siparişler `activeOrders` ve `deliveredOrders` olarak gruplanmıştır.
+- Sipariş durumları için label ve renk mapping yapısı oluşturulmuştur.
+
+---
+
+## 10. Role Based Navigation
+
+- **Görev:** Kullanıcı rolüne göre mobil uygulamada uygun ekranların gösterilmesi.
+
+### Roller
+
+- `customer`
+- `kitchen`
+- `waiter`
+- `admin`
+- `owner`
+
+### Kullanıcı Deneyimi
+
+- Customer rolü müşteri tablarına yönlendirilir.
+- Kitchen rolü mutfak ekranına yönlendirilir.
+- Waiter rolü garson ekranına yönlendirilir.
+- Admin ve Owner rolleri personel ekranlarını görebilir.
+- Yetkisiz ekranların yanlış kullanıcıya gösterilmesi engellenir.
+
+### Teknik Detaylar
+
+- `RootNavigator` içinde role kontrolü yapılmıştır.
+- Customer kullanıcıları için `CustomerTabs` kullanılmıştır.
+- Personel kullanıcıları için `StaffTabs` kullanılmıştır.
+- `AuthContext` içindeki `userInfo.user.role` değeri kullanılmıştır.
+
+---
+
+## 11. Kitchen / Mutfak Ekranı
+
+- **API Endpoint:** `GET /api/orders`
+- **API Endpoint:** `PUT /api/orders/:id/status`
+- **Görev:** Mutfak personelinin aktif siparişleri görmesini ve sipariş durumlarını güncellemesini sağlayan ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Mutfak başlığı
+- Yenile butonu
+- Çıkış butonu
+- Aktif sipariş istatistikleri
+- Durum filtresi
+- Sipariş kartları
+- Müşteri bilgisi
+- Ürün listesi
+- Sipariş durumu badge
+- "Hazırlanıyor" butonu
+- "Hazır" butonu
+- Empty state
+- Pull-to-refresh
+
+### Validasyon
+
+- Sadece aktif siparişler listelenir.
+- Teslim edilmiş siparişler mutfak ekranında gösterilmez.
+- `received` durumundaki siparişler `preparing` yapılabilir.
+- `preparing` durumundaki siparişler `ready` yapılabilir.
+- `ready` durumundaki siparişler için garsona yönlendirme mesajı gösterilir.
+
+### Kullanıcı Deneyimi
+
+- Liste 15 saniyede bir otomatik yenilenir.
+- Kullanıcı isterse manuel Yenile butonuyla listeyi güncelleyebilir.
+- Durum güncelleme sırasında buton disabled hale gelir.
+- İşlem başarılı veya başarısız olursa mesaj gösterilir.
+
+### Teknik Detaylar
+
+- `orderApi.getAllOrders()` servisi kullanılmıştır.
+- `orderApi.updateOrderStatus()` servisi kullanılmıştır.
+- `useCallback` ile fetch fonksiyonu optimize edilmiştir.
+- `setInterval` ile 15 saniyelik otomatik yenileme yapılmıştır.
+- Pull-to-refresh desteği eklenmiştir.
+
+---
+
+## 12. Waiter / Garson Ekranı
+
+- **API Endpoint:** `GET /api/orders`
+- **API Endpoint:** `PUT /api/orders/:id/status`
+- **Görev:** Garson personelinin hazır siparişleri görmesini ve teslim edildi olarak işaretlemesini sağlayan ekranın tasarımı ve implementasyonu.
+
+### UI Bileşenleri
+
+- Garson başlığı
+- Yenile butonu
+- Çıkış butonu
+- Hazır sipariş istatistikleri
+- Hazır sipariş kartları
+- Masa numarası
+- Müşteri bilgisi
+- Teslim edilecek ürünler
+- Toplam tutar
+- "Teslim Edildi" butonu
+- Empty state
+- Pull-to-refresh
+
+### Validasyon
+
+- Sadece `ready` durumundaki siparişler listelenir.
+- Teslim edilen sipariş listeden kaldırılır.
+- İşlem sırasında buton disabled hale gelir.
+
+### Kullanıcı Deneyimi
+
+- Hazır siparişler 15 saniyede bir otomatik yenilenir.
+- Kullanıcı manuel Yenile butonuyla listeyi güncelleyebilir.
+- Sipariş teslim edildiğinde başarı mesajı gösterilir.
+- Hazır sipariş yoksa bilgilendirici empty state gösterilir.
+
+### Teknik Detaylar
+
+- `orderApi.getAllOrders({ status: "ready" })` kullanılmıştır.
+- `orderApi.updateOrderStatus(orderId, "delivered")` kullanılmıştır.
+- `setInterval` ile otomatik yenileme yapılmıştır.
+- Pull-to-refresh desteği eklenmiştir.
+
+---
+
+## 13. Mobil App Icon, Splash ve APK Hazırlığı
+
+- **Görev:** Mobil uygulamanın build öncesi görsel asset ve APK hazırlıklarının yapılması.
+
+### UI / Asset Bileşenleri
+
+- `icon.png`
+- `adaptive-icon.png`
+- `favicon.png`
+- `splash-icon.png`
+
+### Kullanıcı Deneyimi
+
+- Uygulama adı BaristaOne olarak ayarlanmıştır.
+- Android uygulama ikonları hazırlanmıştır.
+- Uygulama açılışta fiziksel cihaz üzerinde test edilmiştir.
+- Alt tabların Android sistem navigation bar ile çakışması giderilmiştir.
+
+### Teknik Detaylar
+
+- `app.json` içinde uygulama adı, Android package ve kamera izni yapılandırılmıştır.
+- APK build sırasında Expo paket sürüm uyumsuzluğu giderilmiştir.
+- `expo-font` ve Expo native paketleri SDK uyumlu sürümlere çekilmiştir.
+- `SafeAreaProvider` eklenmiştir.
+- Bottom tab yüksekliği `useSafeAreaInsets()` ile dinamik hale getirilmiştir.
