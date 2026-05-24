@@ -190,3 +190,188 @@ Bu dokümanda, BaristaOne mobil uygulamasının REST API ile bağlantı görevle
   tableNumber: 4,
   paymentStatus: "paid"
 }
+```
+### Teknik Detaylar
+
+- orderApi.createOrder({ cart, tableNumber }) fonksiyonu oluşturulmuştur.
+- Mobil tarafta cart içinde tutulan ürünler backend'in beklediği items formatına çevrilmiştir.
+- paymentStatus: "paid" gönderilerek ödeme simülasyonu yapılmıştır.
+- Sipariş başarılı olursa clearCart() çalıştırılmıştır.
+
+---
+
+## 9. Müşteri Siparişleri Listeleme Servisi
+
+- API Endpoint: GET /api/orders/my-orders
+- Görev: Müşterinin kendi siparişlerini mobil uygulamada listelemek.
+
+### İşlevler
+
+- Kullanıcının kendi siparişlerini API'den çekme
+- Siparişleri aktif ve teslim edilenler olarak ayırma
+- Sipariş durumlarını renkli badge ile gösterme
+- Pull-to-refresh ile listeyi yenileme
+- Sipariş yoksa empty state gösterme
+  
+### Teknik Detaylar
+
+- orderApi.getMyOrders(params) fonksiyonu oluşturulmuştur.
+- getOrders(response) helper fonksiyonu kullanılmıştır.
+- Siparişler activeOrders ve deliveredOrders olarak gruplanmıştır.
+- Sipariş istatistikleri useMemo ile hesaplanmıştır.
+
+---
+
+## 10. QR Masa Servisi
+
+- API Endpoint: GET /api/tables/code/:tableCode
+- Görev: QR koddan okunan masa kodunu backend'e göndererek masa bilgisini almak.
+
+### İşlevler
+
+- QR koddan masa kodunu okuma
+- QR içeriği link ise içinden masa kodunu ayrıştırma
+- Masa koduyla backend'e istek gönderme
+- Gelen masa bilgisini seçili masa olarak saklama
+- Checkout ekranında masa numarasını otomatik doldurma
+
+### Teknik Detaylar
+
+- tableApi.getTableByCode(tableCode) fonksiyonu oluşturulmuştur.
+- extractTableCode() fonksiyonu ile QR içeriğinden masa kodu ayrıştırılmıştır.
+- QR içeriği direkt kod veya /table/:tableCode/menu formatında link olabilir.
+- getTable(response) helper fonksiyonu kullanılmıştır.
+- CartContext içine selectedTable, setSelectedTable ve clearSelectedTable eklenmiştir.
+
+---
+
+## 11. Personel Sipariş Listeleme Servisi
+
+- API Endpoint: GET /api/orders
+- Görev: Kitchen, Waiter, Admin ve Owner rolleri için sipariş listesini backend'den çekmek.
+
+### İşlevler
+
+- Kitchen ekranında aktif siparişleri listeleme
+- Waiter ekranında hazır siparişleri listeleme
+- Duruma göre filtreleme yapma
+- Sıralama parametresi gönderme
+- Pull-to-refresh ve manuel yenileme desteği sağlama
+
+### Teknik Detaylar
+
+- orderApi.getAllOrders(params) fonksiyonu oluşturulmuştur.
+- Kitchen ekranında received, preparing ve ready durumları gösterilmiştir.
+- Waiter ekranında sadece ready durumundaki siparişler gösterilmiştir.
+- Liste 15 saniyede bir otomatik yenilenmiştir.
+- API çağrıları useCallback ile düzenlenmiştir.
+
+---
+
+## 12. Sipariş Durumu Güncelleme Servisi
+
+- API Endpoint: PUT /api/orders/:id/status
+- Görev: Kitchen ve Waiter ekranlarında sipariş durumunu güncellemek.
+
+### İşlevler
+
+- Kitchen ekranında siparişi received durumundan preparing durumuna alma
+- Kitchen ekranında siparişi preparing durumundan ready durumuna alma
+- Waiter ekranında siparişi ready durumundan delivered durumuna alma
+- Başarılı güncelleme sonrası listeyi yenileme
+- Hata durumunda kullanıcıya mesaj gösterme
+
+### Durum Akışı
+
+Kitchen:
+received -> preparing
+preparing -> ready
+
+Waiter:
+ready -> delivered
+
+### Teknik Detaylar
+
+- orderApi.updateOrderStatus(orderId, orderStatus) fonksiyonu oluşturulmuştur.
+- İşlemdeki siparişi takip etmek için updatingOrderId state'i kullanılmıştır.
+- Güncelleme sırasında ilgili buton disabled hale getirilmiştir.
+- Başarılı işlemden sonra fetchOrders({ silent: true }) çağrılmıştır.
+
+---
+
+## 13. Response Helper Servisleri
+
+- Dosya: mobile/src/api/responseHelpers.js
+- Görev: Backend'den gelen farklı response formatlarını mobil ekranlarda kolay kullanılabilir hale getirmek.
+
+### İşlevler
+
+- Auth response'unu ayrıştırma
+- Menü ürünlerini ayrıştırma
+- Kategori listesini ayrıştırma
+- Ürün detayını ayrıştırma
+- Sipariş listesini ayrıştırma
+- Masa bilgisini ayrıştırma
+- 
+### Teknik Detaylar
+
+getAuthPayload(response)
+getItems(response)
+getCategories(response)
+getItem(response)
+getOrders(response)
+getTable(response)
+
+- Bu helper fonksiyonlar sayesinde ekranlarda response formatı tekrar tekrar kontrol edilmemiştir.
+
+---
+
+## 14. Mobil Backend Hata ve Loading Yönetimi
+
+- Görev: API isteklerinde loading, success ve error state yönetimini sağlamak.
+
+### İşlevler
+
+- API isteği sırasında loading indicator gösterme
+- Form gönderimi sırasında butonu loading/disabled hale getirme
+- API hatalarında kullanıcı dostu mesaj gösterme
+- Başarılı işlemlerde başarı mesajı gösterme
+- Veri yoksa empty state gösterme
+
+### Teknik Detaylar
+
+- loading
+- refreshing
+- submitting
+- updatingOrderId
+- error
+- message
+
+- state yapıları ekranlara göre kullanılmıştır.
+
+---
+
+## 15. Rol Bazlı Backend Kullanımı
+
+- Görev: Kullanıcı rolüne göre uygun API akışlarının çalıştırılması.
+- Roller
+- customer
+- kitchen
+- waiter
+- admin
+- owner
+
+### İşlevler
+
+- Customer kullanıcısı müşteri sipariş endpointlerini kullanır.
+- Kitchen kullanıcısı mutfak sipariş endpointlerini kullanır.
+- Waiter kullanıcısı hazır sipariş endpointlerini kullanır.
+- Admin ve Owner rolleri personel ekranlarını görebilir.
+
+### Teknik Detaylar
+
+- Kullanıcı rolü AuthContext içindeki userInfo.user.role üzerinden okunmuştur.
+- RootNavigator içinde role based yönlendirme yapılmıştır.
+- Personel ekranları için StaffTabs, müşteri ekranları için CustomerTabs kullanılmıştır.
+
+---
