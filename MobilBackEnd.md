@@ -1,6 +1,6 @@
 # BaristaOne Mobil Backend (REST API Bağlantısı) Görev Dağılımı
 
-**REST API Adresi:** [https://barista-one-api.vercel.app/api](https://barista-one-api.vercel.app/api)
+**REST API Adresi:** [https://barista-one-api.vercel.app](https://barista-one-api.vercel.app)
 
 Bu dokümanda, BaristaOne mobil uygulamasının REST API ile iletişimini sağlayan backend entegrasyon görevleri listelenmektedir. Mobil uygulama React Native ve Expo ile geliştirilmiş, backend bağlantısı Axios üzerinden sağlanmıştır.
 
