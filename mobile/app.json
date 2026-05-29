@@ -15,6 +15,7 @@
     },
     "android": {
       "package": "com.kamilertap.baristaone",
+      "version": "1",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f8fafc"

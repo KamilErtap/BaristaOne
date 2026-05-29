@@ -41,10 +41,9 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/menu" replace />} />
-
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
         <Route path="/menu" element={<Menu />} />
         <Route path="/menu/:id" element={<MenuDetail />} />
