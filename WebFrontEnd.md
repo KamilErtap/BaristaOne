@@ -8,4 +8,4 @@ Bu dokümanda, web uygulamasının kullanıcı arayüzü (UI) ve kullanıcı den
 
 ## Grup Üyelerinin Web Frontend Görevleri
 
-1. [Kamil Ertap'ın Web Frontend Görevleri](Kamil-Ertap/Kamil-Kamil-Web-Frontend-Gorevleri.md)
+1. [Kamil Ertap'ın Web Frontend Görevleri](Kamil-Ertap/Kamil-Ertap-Web-Frontend-Gorevleri.md)
