@@ -13,6 +13,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import AccountDeletion from './pages/AccountDeletion';
 
 import AdminDashboard from './pages/AdminDashboard';
 import AdminMenu from './pages/AdminMenu';
@@ -42,6 +43,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/menu" replace />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/account-deletion" element={<AccountDeletion />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
